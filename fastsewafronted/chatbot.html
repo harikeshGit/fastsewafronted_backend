@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FastSewa AI Chatbot</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* --- THEME COLORS --- */
+:root {
+  --primary: #ff5722; /* FastSewa Orange */
+  --primary-dark: #e64a19;
+  --dark: #1f2937;
+  --border: #e5e7eb;
+  --light-bg: #f9fafb;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Toggle Button */
+.fastsewa-chatbot-toggle {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+  z-index: 99999;
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: pulse 2s infinite;
+}
+
+.fastsewa-chatbot-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(255, 87, 34, 0.6);
+}
+
+@keyframes pulse { 
+  0% { box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.7); } 
+  70% { box-shadow: 0 0 0 15px rgba(255, 87, 34, 0); } 
+  100% { box-shadow: 0 0 0 0 rgba(255, 87, 34, 0); } 
+}
+
+/* Chat Container */
+.fastsewa-chatbot-container {
+  position: fixed;
+  bottom: 100px;
+  right: 25px;
+  width: 380px;
+  height: 600px;
+  max-height: 80vh;
+  background: #fff;
+  display: none;
+  flex-direction: column;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  z-index: 99999;
+  overflow: hidden;
+}
+
+/* Header */
+.fastsewa-chatbot-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.fastsewa-chatbot-header button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: 0.2s;
+}
+.fastsewa-chatbot-header button:hover { opacity: 1; }
+
+/* Body */
+.fastsewa-chatbot-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  background: var(--light-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Messages */
+.fastsewa-message {
+  max-width: 85%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  position: relative;
+}
+
+.fastsewa-bot-message {
+  background: #fff;
+  border: 1px solid var(--border);
+  align-self: flex-start;
+  color: var(--dark);
+  border-bottom-left-radius: 4px;
+}
+
+.fastsewa-user-message {
+  background: var(--primary);
+  color: #fff;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 2px 8px rgba(255, 87, 34, 0.25);
+}
+
+/* Service Buttons Grid */
+.service-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.service-btn {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: #444;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.service-btn i { color: var(--primary); font-size: 14px; }
+
+.service-btn:hover {
+  background: #fff3e0;
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Footer */
+.fastsewa-chatbot-footer {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  background: #fff;
+}
+
+.fastsewa-chatbot-input {
+  flex: 1;
+  padding: 12px 15px;
+  border-radius: 25px;
+  border: 1px solid var(--border);
+  outline: none;
+  font-size: 14px;
+  background: #f9fafb;
+}
+.fastsewa-chatbot-input:focus {
+  border-color: var(--primary);
+  background: #fff;
+}
+
+.fastsewa-chatbot-send-btn {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+.fastsewa-chatbot-send-btn:hover { background: var(--primary-dark); }
+
+/* PDF Button */
+.pdf-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #10b981;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 13px;
+  margin-top: 5px;
+  font-weight: 500;
+}
+.pdf-download-btn:hover { background: #059669; }
+</style>
+</head>
+
+<body>
+
+<button class="fastsewa-chatbot-toggle" id="toggleBtn">
+  <i class="fas fa-comment-dots"></i>
+</button>
+
+<div class="fastsewa-chatbot-container" id="chatbox">
+
+  <div class="fastsewa-chatbot-header">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-robot"></i> <b>FastSewa Assistant</b>
+    </div>
+    <button id="closeBtn"><i class="fas fa-times"></i></button>
+  </div>
+
+  <div class="fastsewa-chatbot-body" id="chatBody"></div>
+
+  <div class="fastsewa-chatbot-footer">
+    <input id="chatInput" class="fastsewa-chatbot-input" placeholder="Type your message..." />
+    <button class="fastsewa-chatbot-send-btn" onclick="sendMessage()">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </div>
+</div>
+
+<script>
+  // ✅ Backend URL
+  const API = "https://fastsewabackend-production.up.railway.app/api";
+
+  // ✅ DOM Elements
+  const chatbox = document.getElementById("chatbox");
+  const chatBody = document.getElementById("chatBody");
+  const input = document.getElementById("chatInput");
+  const toggleBtn = document.getElementById("toggleBtn");
+  const closeBtn = document.getElementById("closeBtn");
+
+  // ✅ 8 Services Mapping (Logic for Backend)
+  const servicePrompts = {
+    construction: "I want construction",
+    security: "Need security guard",
+    medical: "I need a doctor",
+    legal: "Legal help",
+    land: "Land verification",
+    finance: "Finance assistant",
+    repair: "I need repair services",
+    material: "I need construction material"
+  };
+
+  // 1. Toggle Chatbox
+  toggleBtn.onclick = () => {
+    if(chatbox.style.display === "flex") {
+        chatbox.style.display = "none";
+    } else {
+        chatbox.style.display = "flex";
+        if(chatBody.innerHTML.trim() === "") initChat();
+    }
+  };
+  
+  closeBtn.onclick = () => {
+    chatbox.style.display = "none";
+  };
+
+  // 2. Add Message Function
+  function addMsg(text, type) {
+    const div = document.createElement("div");
+    div.className = "fastsewa-message " + (type === "bot" ? "fastsewa-bot-message" : "fastsewa-user-message");
+    div.innerHTML = text;
+    chatBody.appendChild(div);
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+
+  // 3. Main Send Function
+  window.sendMessage = async function(key) {
+    let msg = "";
+
+    if (key && servicePrompts[key]) {
+      msg = servicePrompts[key];
+    } else {
+      msg = input.value.trim();
+    }
+
+    if (!msg) return;
+
+    addMsg(msg, "user");
+    input.value = "";
+
+    try {
+      const res = await fetch(`${API}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: msg })
+      });
+
+      const data = await res.json();
+      
+      addMsg(data.response || "Sorry, I didn't understand. Please try again.", "bot");
+
+      if (data.pdf_generated && data.pdf_file) {
+        addMsg(
+          `<a class="pdf-download-btn" target="_blank"
+          href="${API}/download-pdf/${data.pdf_file}">
+          <i class="fas fa-file-pdf"></i> Download PDF</a>`, "bot"
+        );
+      }
+
+    } catch (err) {
+      console.error(err);
+      addMsg("⚠️ Server busy. Please call support: +91 8275723755", "bot");
+    }
+  };
+
+  // 4. Handle Enter Key
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+
+  // 5. Initial Welcome Message with 8 Service Buttons
+  function initChat() {
+    addMsg("👋 <b>Namaste!</b> Welcome to FastSewa. Select a service to get started:", "bot");
+    
+    addMsg(`
+      <div class="service-buttons">
+        <button class="service-btn" onclick="sendMessage('construction')"><i class="fas fa-hard-hat"></i> Construction</button>
+        <button class="service-btn" onclick="sendMessage('security')"><i class="fas fa-shield-alt"></i> Security</button>
+        <button class="service-btn" onclick="sendMessage('medical')"><i class="fas fa-user-md"></i> Medical</button>
+        <button class="service-btn" onclick="sendMessage('legal')"><i class="fas fa-gavel"></i> Legal & GST</button>
+        <button class="service-btn" onclick="sendMessage('land')"><i class="fas fa-map"></i> Land Verify</button>
+        <button class="service-btn" onclick="sendMessage('finance')"><i class="fas fa-coins"></i> Finance</button>
+        <button class="service-btn" onclick="sendMessage('repair')"><i class="fas fa-tools"></i> Repairs</button>
+        <button class="service-btn" onclick="sendMessage('material')"><i class="fas fa-truck"></i> Material Supply</button>
+      </div>
+    `, "bot");
+  }
+</script>
+
+</body>
+</html>

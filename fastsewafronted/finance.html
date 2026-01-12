@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastSewa - Finance Assistant</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">     
+    <link rel="stylesheet" href="css/footer.css">    
+    <link rel="stylesheet" href="css/chatbot.css">   
+    
+    <style>
+        /* --- PAGE SPECIFIC STYLES --- */
+        body { background-color: #f3f4f6; font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+
+        /* Navbar Styling */
+        .navbar {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 15px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        }
+
+        /* Hero Section */
+        .finance-hero {
+            position: relative;
+            height: 50vh;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            overflow: hidden;
+            margin-top: 80px;
+        }
+
+        .finance-hero::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+        }
+
+        .hero-content { z-index: 2; padding: 0 20px; }
+        .hero-content h1 {
+            font-size: 3rem; font-weight: 700; margin-bottom: 15px;
+            background: linear-gradient(to right, #fff, #ffccbc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero-content p { font-size: 1.2rem; color: #cbd5e1; max-width: 600px; margin: 0 auto; }
+
+        /* Booking Section */
+        .booking-section { padding: 60px 0; background: #f3f4f6; }
+        .booking-container {
+            display: flex; flex-wrap: wrap; gap: 50px;
+            max-width: 1200px; margin: 0 auto; padding: 0 20px;
+        }
+
+        /* Left Info Side */
+        .info-side { flex: 1; min-width: 300px; }
+        
+        .finance-image-card {
+            background: white; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 30px;
+            border: 1px solid #e5e7eb;
+        }
+        .finance-image-card img { width: 100%; height: 250px; object-fit: cover; }
+        
+        .quote-box {
+            padding: 25px; text-align: center; background: #fff;
+        }
+        .quote-box p { font-size: 1.1rem; color: #334155; font-style: italic; line-height: 1.6; }
+        .quote-author { display: block; margin-top: 10px; font-size: 0.9rem; color: #ff5722; font-weight: 600; }
+
+        .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .feature-card {
+            background: white; padding: 20px; border-radius: 15px;
+            border: 1px solid #e5e7eb; transition: 0.3s; display: flex; align-items: center; gap: 15px;
+        }
+        .feature-card:hover { transform: translateY(-3px); border-color: #ff5722; box-shadow: 0 5px 15px rgba(255,87,34,0.1); }
+        .feature-icon {
+            width: 45px; height: 45px; background: #fff3e0; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; color: #ff5722; font-size: 1.2rem;
+        }
+        .feature-text h4 { font-size: 1rem; color: #1e293b; margin-bottom: 2px; }
+        .feature-text p { font-size: 0.8rem; color: #64748b; margin: 0; }
+
+        /* Right Form Side */
+        .form-side { flex: 1; min-width: 350px; }
+        .booking-form-card {
+            background: white; padding: 35px; border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05); border: 1px solid #e5e7eb;
+            position: sticky; top: 100px;
+        }
+        
+        .form-header h3 { font-size: 1.6rem; color: #1e293b; margin-bottom: 5px; }
+        .form-header p { color: #64748b; margin-bottom: 25px; font-size: 0.95rem; }
+
+        /* --- FORM INPUT STYLING --- */
+        .form-group { margin-bottom: 20px; }
+        
+        /* Input Fields */
+        .form-input, .form-select, .form-textarea {
+            width: 100%; 
+            padding: 14px 15px; 
+            border: 1px solid #cbd5e1;
+            border-radius: 8px; 
+            font-size: 1rem; 
+            background-color: #ffffff; 
+            color: #1e293b; /* Dark Text Color */
+            outline: none; 
+            transition: 0.2s; 
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+        }
+
+        /* Placeholder Color (Example Text) */
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: #94a3b8; 
+            opacity: 1;
+        }
+
+        /* Focus State */
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: #ff5722; 
+            box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%; padding: 14px; background: #ff5722; color: white;
+            border: none; border-radius: 10px; font-weight: 600; font-size: 1rem;
+            cursor: pointer; transition: 0.3s; margin-top: 10px; 
+            box-shadow: 0 4px 12px rgba(255, 87, 34, 0.25);
+        }
+        .btn-submit:hover { background: #e64a19; transform: translateY(-2px); }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .features-grid { grid-template-columns: 1fr; }
+            .booking-form-card { padding: 25px; }
+            .hero-content h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container" style="display: flex; justify-content: space-between; align-items: center; width: 90%; margin: 0 auto; max-width: 1200px;">
+            <div class="logo">
+                <a href="index.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                    <img src="images/logo1.png" alt="FS" style="height: 50px; width: auto;">
+                    <div style="font-size: 24px; font-weight: 800; color: #0f172a;">FastSewa<span> Facilities</span></div>
+                </a>
+            </div>
+            <ul class="nav-links" style="display: flex; gap: 30px; list-style: none;">
+                <li><a href="index.html" style="color: #0f172a; font-weight: 500; text-decoration: none;">Home</a></li>
+                <li><a href="index.html#services" style="color: #0f172a; font-weight: 500; text-decoration: none;">Services</a></li>
+                <li id="auth-action">
+                    <a href="login.html" style="padding: 10px 25px; border-radius: 50px; background: #ff5722; color: white; font-weight: 600; text-decoration: none;">Login/Signup</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="finance-hero">
+        <div class="hero-content">
+            <h1>Finance Assistant</h1>
+            <p>Smart financial planning, loan assistance, and tax expert advice at your fingertips.</p>
+        </div>
+        <div style="position: absolute; bottom: 0; left: 0; width: 100%; overflow: hidden; line-height: 0;">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" style="position: relative; display: block; width: calc(100% + 1.3px); height: 50px;">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" style="fill: #f3f4f6;"></path>
+            </svg>
+        </div>
+    </header>
+
+    <section class="booking-section">
+        <div class="booking-container">
+            
+            <div class="info-side">
+                <div class="finance-image-card">
+                    <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Finance">
+                    <div class="quote-box">
+                        <p>"Do not save what is left after spending, but spend what is left after saving."</p>
+                        <span class="quote-author">- Warren Buffett</span>
+                    </div>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="feature-text">
+                            <h4>Investment</h4>
+                            <p>Maximize returns.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-file-invoice"></i></div>
+                        <div class="feature-text">
+                            <h4>Tax Filing</h4>
+                            <p>Easy ITR & GST.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                        <div class="feature-text">
+                            <h4>Quick Loans</h4>
+                            <p>Low interest rates.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="feature-text">
+                            <h4>Insurance</h4>
+                            <p>Secure family.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-side">
+                <div class="booking-form-card">
+                    <div class="form-header">
+                        <h3>Request Consultation</h3>
+                        <p>Fill in your details below for expert advice.</p>
+                    </div>
+                    
+                    <form id="financeForm">
+                        <div class="form-group">
+                            <input type="text" name="fullName" id="fullName" class="form-input" required placeholder="Full Name (Ex: Rahul Kumar)">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <input type="email" name="email" id="email" class="form-input" required placeholder="Email Address">
+                            </div>
+                            <div class="form-group">
+                                <input type="tel" name="phone" id="phone" class="form-input" required placeholder="Phone Number">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <input type="number" name="monthlyIncome" id="monthlyIncome" class="form-input" placeholder="Monthly Income (₹)">
+                            </div>
+                            <div class="form-group">
+                                <input type="number" name="monthlyExpense" id="monthlyExpense" class="form-input" placeholder="Monthly Expense (₹)">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <select name="goalType" id="goalType" class="form-select" required>
+                                <option value="" disabled selected>Select Service Required</option>
+                                <option value="Investment">Investment Planning</option>
+                                <option value="Loan">Loan Assistance</option>
+                                <option value="Tax">Income Tax / GST</option>
+                                <option value="Insurance">Insurance</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <textarea name="notes" id="notes" class="form-textarea" rows="3" placeholder="Additional Details (Optional)"></textarea>
+                        </div>
+
+                        <button type="submit" id="financeSubmit" class="btn-submit">Submit Request</button>
+                    </form>
+
+                    <div id="financeActions" style="display: none; margin-top: 20px; text-align: center;">
+                        <button onclick="location.href='dashboard.html'" style="padding: 10px 20px; border: 1px solid #ff5722; color: #ff5722; background: white; border-radius: 50px; cursor: pointer; margin-right: 10px;">Go to Dashboard</button>
+                        <button onclick="location.reload()" style="padding: 10px 20px; border: 1px solid #cbd5e1; color: #64748b; background: white; border-radius: 50px; cursor: pointer;">New Request</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <div id="fastsewa-footer"></div>
+
+    <button class="fastsewa-chatbot-toggle" id="toggleBtn"><i class="fas fa-comment-dots"></i></button>
+    <div class="fastsewa-chatbot-container" id="chatbox" style="display: none;">
+        <div class="fastsewa-chatbot-header">
+            <div><i class="fas fa-robot"></i> FastSewa AI</div>
+            <button id="closeBtn" style="background:none; border:none; color:white; cursor:pointer;">✕</button>
+        </div>
+        <div class="fastsewa-chatbot-body" id="chatBody"></div>
+        <div class="fastsewa-chatbot-footer">
+            <input id="chatInput" class="fastsewa-chatbot-input" placeholder="Type message..." />
+            <button class="fastsewa-chatbot-send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script src="js/footer.js"></script>
+    <script src="js/chatbot.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script>
+        (function () { 
+            emailjs.init("82w8_I7wL3TeHxJa6"); // YOUR PUBLIC KEY
+        })();
+
+        document.getElementById("financeForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('financeSubmit');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = 'Sending... <i class="fas fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+
+            // Prepare Data for Email
+            // We combine extra fields into the 'message' parameter
+            const formData = {
+                from_name: document.getElementById('fullName').value,
+                from_email: document.getElementById('email').value,
+                message: `
+                    Phone: ${document.getElementById('phone').value}
+                    Service: ${document.getElementById('goalType').value}
+                    Income: ₹${document.getElementById('monthlyIncome').value}
+                    Expense: ₹${document.getElementById('monthlyExpense').value}
+                    Notes: ${document.getElementById('notes').value}
+                `
+            };
+
+            emailjs.send("service_ap93y7a", "template_hvuzvq9", formData)
+            .then(function() {
+                alert("✅ Request sent successfully! Our team will contact you soon.");
+                document.getElementById("financeForm").reset();
+                document.getElementById("financeForm").style.display = "none";
+                document.getElementById("financeActions").style.display = "block";
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, function(error) {
+                alert("❌ Failed to send request. Please check your internet.");
+                console.log(error);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        });
+
+        // Navbar Logic
+        document.addEventListener("DOMContentLoaded", function() {
+            const rawUser = localStorage.getItem("fastsewa_current_user") || localStorage.getItem("fastsewaUser");
+            let user = null;
+            try { user = rawUser ? JSON.parse(rawUser) : null; } catch { user = null; }
+            const token = localStorage.getItem("fastsewaToken") || localStorage.getItem("fastsewa_token");
+            const authAction = document.getElementById("auth-action");
+
+            if (user && token && authAction) {
+                const displayName =
+                    user.name ||
+                    user.fullName ||
+                    `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                    user.email ||
+                    'User';
+                const firstName = displayName.split(" ")[0] || 'User';
+                authAction.innerHTML = `
+                    <div class="user-nav-profile" style="position: relative; display: inline-block;">
+                        <a href="dashboard.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; background: white; padding: 5px 15px 5px 5px; border-radius: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 1px solid #eee;">
+                            <div style="width: 35px; height: 35px; background: #ff5722; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                ${firstName.charAt(0).toUpperCase()}
+                            </div>
+                            <span style="font-weight: 600; font-size: 14px; color: #333;">${firstName}</span>
+                        </a>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

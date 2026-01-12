@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastSewa Admin - Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; margin-bottom: 20px; }
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        .status-item:last-child { border-bottom: none; }
+        .status-label { font-weight: bold; color: #555; }
+        .status-value {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .status-ok {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        button:hover { background: #2980b9; }
+        .button-group { margin: 20px 0; }
+        .log-box {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            color: #333;
+        }
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .log-entry.error { color: #721c24; }
+        .log-entry.success { color: #155724; }
+        .log-entry.info { color: #004085; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 FastSewa Admin - System Diagnostics</h1>
+        
+        <div style="background: #e7f3ff; border-left: 4px solid #3498db; padding: 10px; margin-bottom: 20px;">
+            <strong>Status Overview:</strong><br>
+            This page tests the connection between frontend and backend.
+        </div>
+
+        <h2>System Status</h2>
+        <div id="status-list"></div>
+
+        <h2>API Connection Tests</h2>
+        <div class="button-group">
+            <button onclick="testHealthCheck()">📡 Test Backend Health</button>
+            <button onclick="testLogin()">🔐 Test Login (Demo)</button>
+            <button onclick="testAnnouncements()">📢 Test Announcements</button>
+            <button onclick="testBookings()">📅 Test Bookings</button>
+            <button onclick="clearLogs()">🗑️ Clear Logs</button>
+        </div>
+
+        <h2>Diagnostic Logs</h2>
+        <div id="logs" class="log-box"></div>
+    </div>
+
+    <script>
+        const API_BASE = (() => {
+            const origin = window.location.origin;
+            const hostname = window.location.hostname;
+            const isLocalHost = hostname === 'localhost' || hostname === '127.0.0.1';
+            if (isLocalHost) return 'http://localhost:4000/api';
+            if (!origin || origin === 'null') return 'http://localhost:4000/api';
+            return `${origin}/api`;
+        })();
+        const logs = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = `[${timestamp}] ${message}`;
+            logs.push({ message: entry, type });
+            
+            const logsDiv = document.getElementById('logs');
+            const div = document.createElement('div');
+            div.className = `log-entry ${type}`;
+            div.textContent = entry;
+            logsDiv.appendChild(div);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+            logs.length = 0;
+            log('Logs cleared', 'info');
+        }
+
+        async function updateStatus() {
+            const statusList = document.getElementById('status-list');
+            const items = [
+                { label: 'Frontend URL', value: window.location.origin },
+                { label: 'Backend API', value: API_BASE },
+                { label: 'Browser', value: navigator.userAgent.split('/')[navigator.userAgent.split('/').length - 1] },
+                { label: 'Storage API', value: typeof(Storage) !== "undefined" ? '✓ Available' : '✗ Not available' }
+            ];
+
+            statusList.innerHTML = items.map(item => `
+                <div class="status-item">
+                    <span class="status-label">${item.label}</span>
+                    <span class="status-value status-ok">${item.value}</span>
+                </div>
+            `).join('');
+
+            // Test backend connectivity
+            try {
+                const response = await fetch(API_BASE + '/health');
+                if (response.ok) {
+                    statusList.innerHTML += `
+                        <div class="status-item">
+                            <span class="status-label">Backend Health</span>
+                            <span class="status-value status-ok">✓ Connected</span>
+                        </div>
+                    `;
+                    log('Backend is running on ' + API_BASE, 'success');
+                }
+            } catch (err) {
+                statusList.innerHTML += `
+                    <div class="status-item">
+                        <span class="status-label">Backend Health</span>
+                        <span class="status-value status-error">✗ Cannot reach backend</span>
+                    </div>
+                `;
+                log('ERROR: Cannot reach backend at ' + API_BASE, 'error');
+            }
+        }
+
+        async function testHealthCheck() {
+            log('Testing backend health check...', 'info');
+            try {
+                const response = await fetch(API_BASE + '/health');
+                const data = await response.json();
+                log('✓ Backend health: ' + JSON.stringify(data), 'success');
+            } catch (err) {
+                log('✗ Health check failed: ' + err.message, 'error');
+            }
+        }
+
+        async function testLogin() {
+            log('Testing login endpoint...', 'info');
+            try {
+                const response = await fetch(API_BASE + '/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'test@admin.com',
+                        password: 'password123'
+                    })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    log('✓ Login endpoint working. Token received.', 'success');
+                } else {
+                    log('Login endpoint returned: ' + data.error, 'info');
+                }
+            } catch (err) {
+                log('✗ Login test failed: ' + err.message, 'error');
+            }
+        }
+
+        async function testAnnouncements() {
+            log('Testing announcements endpoint...', 'info');
+            try {
+                const response = await fetch(API_BASE + '/announcements');
+                const data = await response.json();
+                if (Array.isArray(data)) {
+                    log('✓ Announcements fetched. Count: ' + data.length, 'success');
+                } else {
+                    log('✓ Announcements endpoint accessible', 'success');
+                }
+            } catch (err) {
+                log('✗ Announcements test failed: ' + err.message, 'error');
+            }
+        }
+
+        async function testBookings() {
+            log('Testing bookings endpoint (requires auth)...', 'info');
+            try {
+                const response = await fetch(API_BASE + '/bookings', {
+                    headers: { 'Authorization': 'Bearer test-token' }
+                });
+                if (response.status === 401) {
+                    log('✓ Bookings endpoint is protected (401 Unauthorized)', 'success');
+                } else if (response.ok) {
+                    const data = await response.json();
+                    log('✓ Bookings fetched. Count: ' + (Array.isArray(data) ? data.length : 'unknown'), 'success');
+                } else {
+                    log('Bookings endpoint returned status: ' + response.status, 'info');
+                }
+            } catch (err) {
+                log('✗ Bookings test failed: ' + err.message, 'error');
+            }
+        }
+
+        // Run status check on page load
+        window.addEventListener('load', updateStatus);
+    </script>
+</body>
+</html>

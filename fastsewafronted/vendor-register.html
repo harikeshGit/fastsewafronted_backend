@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendor Registration - FastSewa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/vendor.css">
+</head>
+<body class="auth-page">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="logo-section">
+        <h1>FastSewa</h1>
+        <p class="tagline">Vendor Registration Portal</p>
+      </div>
+
+      <form id="vendorRegisterForm" class="auth-form">
+        <h2>Join as Service Provider</h2>
+
+        <div class="form-group">
+          <label for="serviceCategory">Service Category *</label>
+          <select id="serviceCategory" required>
+            <option value="">Select Service</option>
+            <option value="construction">🏗️ Construction</option>
+            <option value="security">🛡️ Security Services</option>
+            <option value="medical">🏥 Medical Services</option>
+            <option value="repair">🔧 Repair & Maintenance</option>
+            <option value="land">🏞️ Land Verification</option>
+            <option value="legal">⚖️ Legal & GST</option>
+            <option value="material">🧱 Material Suppliers</option>
+            <option value="finance">💰 Finance Consultant</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="businessName">Business Name *</label>
+          <input type="text" id="businessName" required>
+        </div>
+
+        <div class="form-group">
+          <label for="ownerName">Owner Name *</label>
+          <input type="text" id="ownerName" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" id="email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Mobile Number *</label>
+          <input type="tel" id="phone" pattern="[0-9]{10}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="city">City *</label>
+          <input type="text" id="city" required>
+        </div>
+
+        <div class="form-group">
+          <label for="aadhaarNumber">Aadhaar Number *</label>
+          <input type="text" id="aadhaarNumber" required>
+        </div>
+
+        <div class="form-group">
+          <label for="panNumber">PAN Number *</label>
+          <input type="text" id="panNumber" required>
+        </div>
+
+        <div class="form-group">
+          <label for="gstNumber">GST Number (optional)</label>
+          <input type="text" id="gstNumber">
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="turnoverBelowLimit">
+          <label for="turnoverBelowLimit">
+            My annual business turnover does not cross 20 Lakh in Bihar and follows state rules.
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="experienceYears">Years of Experience *</label>
+          <input type="number" id="experienceYears" min="0" max="50" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password *</label>
+          <input type="password" id="password" minlength="6" required>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password *</label>
+          <input type="password" id="confirmPassword" minlength="6" required>
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="terms" required>
+          <label for="terms">I agree to FastSewa Partner Terms & Policy.</label>
+        </div>
+
+        <button type="submit" class="btn-primary">Register as Vendor</button>
+
+        <div class="form-footer">
+          <p>Already a vendor? <a href="vendor-login.html">Login here</a></p>
+        </div>
+
+        <div id="statusMessage" class="status-message"></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/vendor-auth.js"></script>
+</body>
+</html>

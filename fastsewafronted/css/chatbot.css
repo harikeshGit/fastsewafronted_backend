@@ -1,0 +1,244 @@
+/* --- CHATBOT STYLES --- */
+:root {
+  --primary: #ff5722; /* FastSewa Orange */
+  --primary-dark: #e64a19;
+  --dark: #1f2937;
+  --border: #e5e7eb;
+  --bg-light: #fafafa;
+}
+
+/* Chatbot Font Family match with Website */
+.fastsewa-chatbot-container, .fastsewa-chatbot-toggle, .fastsewa-chatbot-input {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Toggle Button */
+.fastsewa-chatbot-toggle {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+  z-index: 99999;
+  transition: transform 0.3s, box-shadow 0.3s;
+  animation: floatChat 3s ease-in-out infinite;
+}
+
+.fastsewa-chatbot-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(255, 87, 34, 0.6);
+}
+
+@keyframes floatChat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Chat Container */
+.fastsewa-chatbot-container {
+  position: fixed;
+  bottom: 100px;
+  right: 25px;
+  width: 380px;
+  height: 550px;
+  max-height: 80vh;
+  background: #fff;
+  display: none;
+  flex-direction: column;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  z-index: 99999;
+  overflow: hidden;
+  animation: slideInChat 0.3s ease-out;
+}
+
+@keyframes slideInChat {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.fastsewa-chatbot-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.fastsewa-chatbot-header button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: 0.2s;
+}
+.fastsewa-chatbot-header button:hover { opacity: 1; transform: scale(1.1); }
+
+/* Body */
+.fastsewa-chatbot-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  background: var(--bg-light);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Messages */
+.fastsewa-message {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+  position: relative;
+}
+
+.fastsewa-bot-message {
+  background: #fff;
+  border: 1px solid var(--border);
+  align-self: flex-start;
+  color: var(--dark);
+  border-bottom-left-radius: 2px;
+}
+
+.fastsewa-user-message {
+  background: var(--primary);
+  color: #fff;
+  align-self: flex-end;
+  border-bottom-right-radius: 2px;
+  box-shadow: 0 2px 5px rgba(255, 87, 34, 0.2);
+}
+
+/* Service Buttons */
+.service-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.service-btn {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: #444;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+  text-align: left;
+  font-weight: 500;
+}
+
+.service-btn:hover {
+  background: #fff3e0; /* Light Orange Tint */
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Footer */
+.fastsewa-chatbot-footer {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  background: #fff;
+}
+
+.fastsewa-chatbot-input {
+  flex: 1;
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: 1px solid var(--border);
+  outline: none;
+  font-size: 14px;
+  background: #f8fafc;
+  transition: 0.3s;
+}
+
+.fastsewa-chatbot-input:focus {
+  border-color: var(--primary);
+  background: #fff;
+}
+
+.fastsewa-chatbot-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+.fastsewa-chatbot-send-btn:hover { background: var(--primary-dark); }
+
+/* PDF Button */
+.pdf-download-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #10b981; color: #fff;
+  padding: 6px 12px; border-radius: 20px;
+  text-decoration: none; font-size: 12px; margin-top: 5px; font-weight: 500;
+}
+.pdf-download-btn:hover { background: #059669; }
+
+/* Responsive Mobile */
+@media (max-width: 480px) {
+  .fastsewa-chatbot-container {
+    width: 90%;
+    right: 5%;
+    bottom: 90px;
+    height: 60vh;
+  }
+}
+/* Update Grid System for 8 Services */
+.grid-4 { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+    gap: 30px; 
+}
+.whatsapp-float {
+    position: fixed;
+    bottom: 25px;
+    right: 100px; /* Chatbot se left side gap */
+    width: 60px;
+    height: 60px;
+    background-color: #25d366;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+    z-index: 9999;
+    text-decoration: none;
+    border: 2px solid white;
+    transition: all 0.3s ease;
+}
+.whatsapp-float:hover {
+    background-color: #128c7e;
+    transform: translateY(-5px);
+}

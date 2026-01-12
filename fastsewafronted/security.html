@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastSewa Security | Elite Protection & Tech</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">     
+    <link rel="stylesheet" href="css/footer.css">    
+    <link rel="stylesheet" href="css/chatbot.css">   
+    
+    <style>
+        /* --- CORE THEME: CYBER TACTICAL --- */
+        :root {
+            --neon-gold: #fbbf24;
+            --cyber-blue: #0ea5e9;
+            --deep-black: #020617;
+            --armor-gray: #1e293b;
+        }
+
+        body { background-color: var(--deep-black); font-family: 'Poppins', sans-serif; overflow-x: hidden; color: white; }
+        h1, h2, h3, .pkg-title { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
+
+        /* Navbar Fix */
+        .navbar {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: rgba(2, 6, 23, 0.9);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(251, 191, 36, 0.1);
+            padding: 15px 0;
+        }
+        .nav-links li a { color: #cbd5e1; }
+        .nav-links li a:hover { color: var(--neon-gold); text-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
+
+        /* --- HERO SECTION --- */
+        .security-hero {
+            position: relative; height: 75vh; min-height: 600px;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; color: white;
+            background: black;
+            margin-top: 80px; overflow: hidden;
+        }
+
+        .security-hero::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            /* High Quality VIP Security Image */
+            background-image: url('https://images.unsplash.com/photo-1616223253272-97b7b2049635?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover; background-position: center; opacity: 0.4;
+            z-index: 0;
+        }
+
+        /* Scanline Effect */
+        .scanlines {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+            background-size: 100% 4px;
+            z-index: 1; pointer-events: none;
+        }
+
+        .hero-content { z-index: 2; padding: 0 20px; max-width: 900px; position: relative; }
+        .hero-content h1 {
+            font-size: 4rem; font-weight: 900; margin-bottom: 15px;
+            text-transform: uppercase;
+            background: linear-gradient(to bottom, #fff, #94a3b8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+        .hero-content p { font-size: 1.3rem; color: #e2e8f0; margin-bottom: 30px; }
+        
+        .trust-badge-row { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
+        .t-badge {
+            background: rgba(251, 191, 36, 0.1); border: 1px solid var(--neon-gold);
+            color: var(--neon-gold); padding: 8px 15px; border-radius: 4px; font-weight: bold;
+            font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* --- TECH FEATURES (INNOVATION) --- */
+        .tech-section { padding: 60px 0; background: #0b1120; border-bottom: 1px solid #1e293b; }
+        .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .tech-card {
+            background: rgba(30, 41, 59, 0.5); padding: 25px; border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05); text-align: center; transition: 0.3s;
+        }
+        .tech-card:hover { border-color: var(--neon-gold); transform: translateY(-5px); }
+        .tech-icon { font-size: 2.5rem; color: var(--neon-gold); margin-bottom: 15px; }
+        .tech-card h3 { font-size: 1.2rem; margin-bottom: 10px; color: white; }
+        .tech-card p { color: #94a3b8; font-size: 0.9rem; }
+
+        /* --- PACKAGES SECTION --- */
+        .packages-section { padding: 80px 0; background: var(--deep-black); }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 2.5rem; color: #fff; text-transform: uppercase; }
+        .section-header span { color: var(--neon-gold); }
+        
+        .pricing-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;
+            max-width: 1200px; margin: 0 auto; padding: 0 20px;
+        }
+
+        .package-card {
+            background: #111827; border-radius: 16px; overflow: hidden;
+            border: 1px solid #374151; transition: 0.4s; position: relative;
+            display: flex; flex-direction: column;
+        }
+        /* Glowing Hover Effect */
+        .package-card:hover { 
+            transform: translateY(-10px); 
+            border-color: var(--neon-gold); 
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.15); 
+        }
+        
+        .pkg-img-box { height: 250px; overflow: hidden; position: relative; }
+        .pkg-img-box img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; filter: grayscale(30%); }
+        .package-card:hover .pkg-img-box img { transform: scale(1.1); filter: grayscale(0%); }
+        
+        .pkg-content { padding: 30px; display: flex; flex-direction: column; flex-grow: 1; }
+        .pkg-title { font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 5px; }
+        .pkg-price { font-size: 2rem; color: var(--neon-gold); font-weight: 700; margin-bottom: 20px; }
+        .pkg-price small { font-size: 0.9rem; color: #94a3b8; font-weight: 400; }
+
+        .features-list { list-style: none; padding: 0; margin-bottom: 25px; flex-grow: 1; }
+        .features-list li { margin-bottom: 12px; color: #cbd5e1; font-size: 0.95rem; display: flex; align-items: center; gap: 10px; }
+        .features-list li i { color: var(--neon-gold); }
+
+        .btn-select {
+            width: 100%; padding: 15px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer;
+            transition: 0.3s; background: #374151; color: white; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-select:hover { background: var(--neon-gold); color: black; }
+        
+        .package-card.featured { border: 2px solid var(--neon-gold); }
+        .package-card.featured .btn-select { background: var(--neon-gold); color: black; }
+        .popular-tag {
+            position: absolute; top: 15px; right: -30px; background: var(--neon-gold); color: black;
+            padding: 5px 40px; font-weight: bold; transform: rotate(45deg); z-index: 5; font-size: 0.8rem;
+        }
+
+        /* --- DEPLOYMENT CALCULATOR --- */
+        .planner-section { padding: 80px 0; background: #0f172a; border-top: 1px solid #1e293b; }
+        .planner-box {
+            background: rgba(30, 41, 59, 0.6); padding: 40px; border-radius: 20px; border: 1px solid #334155;
+            max-width: 900px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 40px; align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        .form-dark-input {
+            width: 100%; padding: 12px; background: #020617; border: 1px solid #475569;
+            color: white; border-radius: 6px; outline: none; margin-bottom: 15px;
+        }
+        .result-stat { font-size: 2.5rem; color: var(--neon-gold); font-weight: 800; display: block; font-family: 'Orbitron'; }
+
+        /* --- BOOKING FORM --- */
+        .booking-section { padding: 80px 0; background: black; }
+        .booking-container { display: flex; flex-wrap: wrap; gap: 50px; max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        .booking-form-card {
+            background: #111827; padding: 40px; border-radius: 16px; flex: 1;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid #374151;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%; padding: 15px; border: 1px solid #374151;
+            border-radius: 6px; font-size: 1rem; background-color: #030712;
+            color: #fff; outline: none; transition: 0.2s; margin-bottom: 20px;
+            font-family: 'Poppins', sans-serif; box-sizing: border-box;
+        }
+        .form-input:focus { border-color: var(--neon-gold); }
+
+        .btn-submit {
+            width: 100%; padding: 15px; background: var(--neon-gold); color: black;
+            border: none; border-radius: 6px; font-weight: 700; font-size: 1.1rem;
+            cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-submit:hover { background: #d97706; }
+
+        /* PAYMENT MODAL */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 2000; display: none;
+            align-items: center; justify-content: center; backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: #1f2937; width: 90%; max-width: 400px; border-radius: 16px;
+            padding: 30px; text-align: center; border: 1px solid var(--neon-gold);
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.2); animation: zoomIn 0.3s;
+        }
+        .upi-qr { width: 200px; margin: 20px 0; border: 4px solid white; border-radius: 10px; }
+        
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        @media (max-width: 900px) {
+            .booking-container { flex-direction: column; }
+            .hero-content h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container" style="display: flex; justify-content: space-between; align-items: center; width: 90%; margin: 0 auto; max-width: 1200px;">
+            <div class="logo">
+                <a href="index.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                    <img src="images/logo1.png" alt="FS" style="height: 50px; width: auto;">
+                    <div style="font-size: 24px; font-weight: 800; color: white;">FastSewa<span> Security</span></div>
+                </a>
+            </div>
+            <ul class="nav-links" style="display: flex; gap: 30px; list-style: none;">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#packages">Packages</a></li>
+                <li><a href="#planner">Planner</a></li>
+                <li><a href="login.html" style="padding: 10px 25px; border-radius: 50px; background: #fbbf24; color: black; font-weight: 600; text-decoration: none;">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="security-hero">
+        <div class="scanlines"></div>
+        <div class="hero-content">
+            <div class="trust-badge-row">
+                <div class="t-badge"><i class="fas fa-shield-alt"></i> Verified Staff</div>
+                <div class="t-badge"><i class="fas fa-clock"></i> 24/7 Deployment</div>
+                <div class="t-badge"><i class="fas fa-crosshairs"></i> Rapid Response</div>
+            </div>
+            <h1>Next-Gen Protection <br><span style="color:var(--neon-gold)">Services</span></h1>
+            <p>Combining Elite Manpower with Advanced Technology. Secure your assets with trained Bouncers & PSOs.</p>
+            
+            <a href="#packages" class="btn-submit" style="display:inline-block; width:auto; padding: 15px 40px; margin-top:20px; text-decoration: none;">Deploy Security</a>
+        </div>
+    </header>
+
+    <section class="tech-section">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 40px; font-family: 'Orbitron';">Smart Security Features</h2>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon"><i class="fas fa-satellite-dish"></i></div>
+                    <h3>GPS Tracking</h3>
+                    <p>Live location tracking of all deployed guards via our dedicated app.</p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon"><i class="fas fa-mobile-alt"></i></div>
+                    <h3>App Reporting</h3>
+                    <p>Instant incident reporting and attendance logs on your phone.</p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon"><i class="fas fa-user-check"></i></div>
+                    <h3>KYC Verified</h3>
+                    <p>100% Police verification and background checks for every staff.</p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon"><i class="fas fa-bolt"></i></div>
+                    <h3>Rapid Backup</h3>
+                    <p>Emergency replacement guarantee within 2 hours.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="packages-section" id="packages">
+        <div class="section-header">
+            <h2>Select Your <span>Force</span></h2>
+            <p style="color:#94a3b8;">Choose from our specialized security tiers.</p>
+        </div>
+        <div class="pricing-grid">
+            
+            <div class="package-card">
+                <div class="pkg-img-box">
+                    <img src="https://images.unsplash.com/photo-1555532538-dcd689d0b741?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Security Guard">
+                </div>
+                <div class="pkg-content">
+                    <div class="pkg-title">Site Guard</div>
+                    <div class="pkg-price">₹800 <small>/ 8hr shift</small></div>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check-square"></i> Gate & Parking Management</li>
+                        <li><i class="fas fa-check-square"></i> Visitor Entry Register</li>
+                        <li><i class="fas fa-check-square"></i> Standard Uniform</li>
+                        <li><i class="fas fa-check-square"></i> App Attendance</li>
+                    </ul>
+                    <button class="btn-select" onclick="openPayment('Site Guard', 800)">Deploy Now</button>
+                </div>
+            </div>
+
+            <div class="package-card featured">
+                <div class="popular-tag">ELITE</div>
+                <div class="pkg-img-box">
+                    <img src="https://images.unsplash.com/photo-1596701836830-15cb343940c6?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+
+[Image of Security Guard in suit]
+ alt="Trained Bouncer">
+                </div>
+                <div class="pkg-content">
+                    <div class="pkg-title">Black Cat Bouncer</div>
+                    <div class="pkg-price">₹1,500 <small>/ 6hr shift</small></div>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check-square"></i> <b>Crowd Control Expert</b></li>
+                        <li><i class="fas fa-check-square"></i> Physically Robust (6ft+)</li>
+                        <li><i class="fas fa-check-square"></i> Black Suit / Safari</li>
+                        <li><i class="fas fa-check-square"></i> Ideal for Events/Clubs</li>
+                    </ul>
+                    <button class="btn-select" onclick="openPayment('Trained Bouncer', 1500)">Deploy Now</button>
+                </div>
+            </div>
+
+            <div class="package-card">
+                <div class="pkg-img-box">
+                    <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Armed PSO">
+                </div>
+                <div class="pkg-content">
+                    <div class="pkg-title">Armed PSO</div>
+                    <div class="pkg-price">₹3,500 <small>/ shift</small></div>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check-square"></i> <b>Personal Bodyguard</b></li>
+                        <li><i class="fas fa-check-square"></i> Licensed Firearm</li>
+                        <li><i class="fas fa-check-square"></i> Ex-Army / CISF</li>
+                        <li><i class="fas fa-check-square"></i> VIP Protocol Training</li>
+                    </ul>
+                    <button class="btn-select" onclick="openPayment('Armed PSO', 3500)">Deploy Now</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="planner-section" style="text-align: center; border-bottom: 1px solid #1e293b;">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <i class="fas fa-quote-left" style="font-size: 3rem; color: var(--neon-gold); opacity: 0.5;"></i>
+            <h3 style="font-size: 1.5rem; line-height: 1.6; margin: 20px 0; color: #cbd5e1;">
+                "Security is not just about guarding a gate; it's about ensuring peace of mind so you can focus on what matters most."
+            </h3>
+            <span style="color: var(--neon-gold); font-weight: bold;">— Operations Head, FastSewa Security</span>
+        </div>
+    </section>
+
+    <section class="planner-section" id="planner">
+        <div class="section-header">
+            <h2>Deployment <span>Calculator</span></h2>
+            <p style="color:#94a3b8;">Estimate your security requirement instantly.</p>
+        </div>
+        <div class="planner-box">
+            <div style="flex: 1; min-width: 300px;">
+                <label style="color:#94a3b8; font-size:0.9rem;">Event / Premise Type</label>
+                <select id="eventType" class="form-dark-input">
+                    <option value="wedding">Wedding / Family Function</option>
+                    <option value="concert">Concert / Public Event</option>
+                    <option value="corporate">Corporate Office</option>
+                    <option value="club">Club / Night Party</option>
+                </select>
+
+                <label style="color:#94a3b8; font-size:0.9rem;">Expected Crowd / Area (SqFt)</label>
+                <input type="number" id="crowdSize" class="form-dark-input" placeholder="e.g., 500 guests">
+
+                <button class="btn-submit" onclick="calculateSecurity()">Generate Plan</button>
+            </div>
+
+            <div class="planner-result" id="planResult" style="flex: 1; min-width: 300px; text-align: center; display: none;">
+                <h3 style="color: white; margin-bottom: 20px;">Suggested Force</h3>
+                <div style="display: flex; justify-content: space-around; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <span id="res-bouncers" class="result-stat">0</span>
+                        <small style="color: #94a3b8;">Bouncers</small>
+                    </div>
+                    <div>
+                        <span id="res-guards" class="result-stat">0</span>
+                        <small style="color: #94a3b8;">Guards</small>
+                    </div>
+                </div>
+                <p style="color: #cbd5e1; font-size: 0.9rem;">Est. Daily Cost: <strong id="res-cost" style="color: var(--neon-gold);">₹0</strong></p>
+                <small style="color: #64748b;">(Excluding Taxes)</small>
+            </div>
+        </div>
+    </section>
+
+    <section class="booking-section">
+        <div class="booking-container">
+            
+            <div class="info-side" style="flex: 1; min-width: 300px;">
+                <h2 style="margin-bottom: 20px; color:white;">Secure Your Spot</h2>
+                <p style="color:#94a3b8; margin-bottom: 30px;">Fill the details below to confirm your security deployment.</p>
+                
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <i class="fas fa-check-circle" style="color: var(--neon-gold); font-size: 1.5rem;"></i>
+                    <div>
+                        <h4 style="color:white; margin:0;">Zero Tolerance Policy</h4>
+                        <p style="color:#64748b; font-size:0.9rem;">Strict discipline maintained by all staff.</p>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <i class="fas fa-mobile-alt" style="color: var(--neon-gold); font-size: 1.5rem;"></i>
+                    <div>
+                        <h4 style="color:white; margin:0;">24/7 Control Room</h4>
+                        <p style="color:#64748b; font-size:0.9rem;">Direct line to our emergency center.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="booking-form-card">
+                <form id="securityForm">
+                    <input type="text" id="fullName" class="form-input" required placeholder="Contact Person Name">
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <input type="email" id="email" class="form-input" required placeholder="Email Address">
+                        <input type="tel" id="phone" class="form-input" required placeholder="Phone Number">
+                    </div>
+
+                    <select id="serviceType" class="form-select" required>
+                        <option value="" disabled selected>Select Requirement</option>
+                        <option value="Site Guard">Site Guard</option>
+                        <option value="Trained Bouncer">Trained Bouncer</option>
+                        <option value="Armed PSO">Armed PSO</option>
+                        <option value="Event Squad">Event Security Squad</option>
+                    </select>
+
+                    <input type="text" id="txnId" class="form-input" placeholder="Transaction ID (Enter after Payment)">
+                    <textarea id="message" class="form-textarea" rows="3" placeholder="Location address & specific instructions..."></textarea>
+
+                    <button type="submit" id="submitBtn" class="btn-submit">Confirm Booking</button>
+                </form>
+            </div>
+
+        </div>
+    </section>
+
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closePayment()" style="position:absolute; top:15px; right:20px; font-size:1.5rem; background:none; border:none; color:#fff; cursor:pointer;">&times;</button>
+            <h3 style="color: var(--neon-gold); margin-bottom: 5px;">Secure Payment</h3>
+            <p id="planName" style="color: white; font-weight: 600; font-size: 1.1rem;"></p>
+            
+            <div style="background: white; padding: 20px; border-radius: 12px; margin: 20px 0;">
+                <img src="" alt="UPI QR" class="upi-qr" id="upiQR">
+                <p style="font-size: 0.9rem; color: #333; margin-top: 10px;"><b>Pay to:</b> 6207141506@upi</p>
+                <p style="font-size: 0.8rem; color: #64748b;">(GPay / PhonePe / Paytm)</p>
+            </div>
+
+            <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 15px;">Enter Transaction ID in the form below.</p>
+            <button class="btn-submit" onclick="closePayment()">I Have Paid</button>
+        </div>
+    </div>
+
+    <div id="fastsewa-footer"></div>
+
+    <button class="fastsewa-chatbot-toggle" id="toggleBtn"><i class="fas fa-comment-dots"></i></button>
+    <div class="fastsewa-chatbot-container" id="chatbox" style="display: none;">
+        <div class="fastsewa-chatbot-header">
+            <div><i class="fas fa-robot"></i> FastSewa AI</div>
+            <button id="closeBtn" style="background:none; border:none; color:white; cursor:pointer;">✕</button>
+        </div>
+        <div class="fastsewa-chatbot-body" id="chatBody"></div>
+        <div class="fastsewa-chatbot-footer">
+            <input id="chatInput" class="fastsewa-chatbot-input" placeholder="Type message..." />
+            <button class="fastsewa-chatbot-send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script src="js/footer.js"></script>
+    <script src="js/chatbot.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+    <script>
+        // --- 1. SECURITY PLANNER LOGIC ---
+        function calculateSecurity() {
+            const type = document.getElementById('eventType').value;
+            const size = parseInt(document.getElementById('crowdSize').value);
+            
+            if(!size) { alert("Please enter crowd size"); return; }
+
+            let guards = 0, bouncers = 0, cost = 0;
+
+            if (type === 'wedding' || type === 'club') {
+                bouncers = Math.ceil(size / 50);
+                guards = Math.ceil(size / 100);
+            } else if (type === 'concert') {
+                bouncers = Math.ceil(size / 30);
+                guards = Math.ceil(size / 50);
+            } else {
+                guards = Math.ceil(size / 200); 
+                bouncers = 0;
+            }
+
+            cost = (guards * 800) + (bouncers * 1500);
+
+            document.getElementById('res-bouncers').innerText = bouncers;
+            document.getElementById('res-guards').innerText = guards;
+            document.getElementById('res-cost').innerText = '₹' + cost.toLocaleString();
+            document.getElementById('planResult').style.display = 'block';
+        }
+
+        // --- 2. PAYMENT LOGIC ---
+        function openPayment(plan, amount) {
+            document.getElementById('planName').innerText = `${plan} - ₹${amount}`;
+            
+            const upiId = "6207141506@upi";
+            const upiLink = `upi://pay?pa=${upiId}&pn=FastSewa Security&am=${amount}&tn=${plan}`;
+            
+            document.getElementById('upiQR').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
+            document.getElementById('paymentModal').style.display = 'flex';
+            
+            document.getElementById('serviceType').value = plan;
+        }
+
+        function closePayment() {
+            document.getElementById('paymentModal').style.display = 'none';
+            document.getElementById('txnId').focus();
+        }
+
+        // --- 3. EMAILJS LOGIC ---
+        (function () { emailjs.init("82w8_I7wL3TeHxJa6"); })();
+
+        document.getElementById("securityForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const txnId = document.getElementById('txnId').value;
+            
+            btn.innerHTML = 'Booking...';
+            btn.disabled = true;
+
+            const formData = {
+                from_name: document.getElementById('fullName').value,
+                from_email: document.getElementById('email').value,
+                message: `
+                    Phone: ${document.getElementById('phone').value}
+                    Service: ${document.getElementById('serviceType').value}
+                    Transaction ID: ${txnId ? txnId : 'Not Paid'}
+                    Location/Details: ${document.getElementById('message').value}
+                `
+            };
+
+            emailjs.send("service_ap93y7a", "template_hvuzvq9", formData)
+            .then(function() {
+                alert("✅ Security Team Booked! Deployment details will be sent shortly.");
+                document.getElementById("securityForm").reset();
+                btn.innerHTML = 'Confirm Booking';
+                btn.disabled = false;
+            }, function(error) {
+                alert("❌ Booking Failed. Call Support.");
+                btn.innerHTML = 'Confirm Booking';
+                btn.disabled = false;
+            });
+        });
+
+        // --- 4. AUTH LOGIC ---
+        document.addEventListener("DOMContentLoaded", function() {
+            const rawUser = localStorage.getItem("fastsewa_current_user") || localStorage.getItem("fastsewaUser");
+            let user = null;
+            try { user = rawUser ? JSON.parse(rawUser) : null; } catch { user = null; }
+            const token = localStorage.getItem("fastsewaToken") || localStorage.getItem("fastsewa_token");
+            const authAction = document.getElementById("auth-action");
+
+            if (user && token && authAction) {
+                const displayName =
+                    user.name ||
+                    user.fullName ||
+                    `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                    user.email ||
+                    'User';
+                const firstName = displayName.split(" ")[0] || 'User';
+                authAction.innerHTML = `
+                    <div class="user-nav-profile" style="position: relative; display: inline-block;">
+                        <a href="dashboard.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; background: #fbbf24; padding: 5px 15px 5px 5px; border-radius: 30px;">
+                            <div style="width: 35px; height: 35px; background: white; color: black; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                ${firstName.charAt(0).toUpperCase()}
+                            </div>
+                            <span style="font-weight: 600; font-size: 14px; color: black;">${firstName}</span>
+                        </a>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendor Dashboard - FastSewa</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/vendor.css">
+</head>
+<body class="dashboard-page">
+  <nav class="vendor-navbar">
+    <div class="nav-brand">
+      <h2>FastSewa Vendor Panel</h2>
+    </div>
+    <div class="nav-user">
+      <span id="vendorName">Loading...</span>
+      <button id="logoutBtn" class="btn-logout">Logout</button>
+    </div>
+  </nav>
+
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="vendor-profile">
+        <div class="profile-avatar">
+          <span id="profileInitial">V</span>
+        </div>
+        <h3 id="sidebarBusinessName">Business Name</h3>
+        <p id="sidebarCategory" class="category-badge">Service Category</p>
+        <p class="approval-status">
+          <span id="approvalBadge" class="badge badge-pending">Pending Approval</span>
+        </p>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="active"><a href="#" data-section="leads">📋 Service Requests</a></li>
+        <li><a href="#" data-section="listings">📦 My Listings</a></li>
+        <li><a href="#" data-section="payout">💰 Payout Details</a></li>
+        <li><a href="#" data-section="settings">⚙️ Settings</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <section class="stats-section">
+        <div class="stat-card">
+          <h4>Total Leads</h4>
+          <p class="stat-number" id="totalLeads">0</p>
+        </div>
+        <div class="stat-card">
+          <h4>Pending</h4>
+          <p class="stat-number" id="pendingLeads">0</p>
+        </div>
+        <div class="stat-card">
+          <h4>Completed</h4>
+          <p class="stat-number" id="completedLeads">0</p>
+        </div>
+        <div class="stat-card">
+          <h4>This Month</h4>
+          <p class="stat-number" id="monthlyEarnings">₹0</p>
+        </div>
+      </section>
+
+      <section id="leadsSection" class="content-section active">
+        <div class="section-header">
+          <h2>📋 Incoming Service Requests</h2>
+        </div>
+        <div id="leadsContainer" class="leads-container">
+          <div class="empty-state">
+            <p>No service requests yet.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="listingsSection" class="content-section">
+        <div class="section-header">
+          <h2>📦 My Listings</h2>
+          <button id="addListingBtn" class="btn-primary">+ Add Listing</button>
+        </div>
+        <div id="listingsContainer" class="leads-container">
+          <div class="empty-state">
+            <p>No listings created yet.</p>
+          </div>
+        </div>
+
+        <div id="listingFormWrapper" style="margin-top:20px; display:none;">
+          <h3>Create / Update Listing</h3>
+          <div class="form-group">
+            <label for="listingTitle">Title</label>
+            <input type="text" id="listingTitle">
+          </div>
+          <div class="form-group">
+            <label for="listingDescription">Description</label>
+            <input type="text" id="listingDescription">
+          </div>
+          <div class="form-group">
+            <label for="listingCity">City</label>
+            <input type="text" id="listingCity">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="listingPriceFrom">Price From</label>
+              <input type="number" id="listingPriceFrom">
+            </div>
+            <div class="form-group">
+              <label for="listingPriceTo">Price To</label>
+              <input type="number" id="listingPriceTo">
+            </div>
+          </div>
+          <button id="saveListingBtn" class="btn-primary">Save Listing</button>
+          <button id="cancelListingBtn" class="btn-secondary" style="margin-top:10px;">Cancel</button>
+        </div>
+      </section>
+
+      <section id="payoutSection" class="content-section">
+        <h2>💰 Payout Details</h2>
+        <div class="profile-form">
+          <div class="form-group">
+            <label for="accountHolderName">Account Holder Name</label>
+            <input type="text" id="accountHolderName">
+          </div>
+          <div class="form-group">
+            <label for="accountNumber">Account Number</label>
+            <input type="text" id="accountNumber">
+          </div>
+          <div class="form-group">
+            <label for="ifsc">IFSC</label>
+            <input type="text" id="ifsc">
+          </div>
+          <div class="form-group">
+            <label for="bankName">Bank Name</label>
+            <input type="text" id="bankName">
+          </div>
+          <div class="form-group">
+            <label for="branch">Branch</label>
+            <input type="text" id="branch">
+          </div>
+          <div class="form-group">
+            <label for="upiId">UPI ID (optional)</label>
+            <input type="text" id="upiId">
+          </div>
+          <button id="savePayoutBtn" class="btn-primary">Save Payout Details</button>
+          <p id="payoutStatusText" class="tagline" style="margin-top:10px;"></p>
+        </div>
+      </section>
+
+      <section id="settingsSection" class="content-section">
+        <h2>⚙️ Account Settings</h2>
+        <div class="settings-form">
+          <h3>Change Password</h3>
+          <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <input type="password" id="currentPassword">
+          </div>
+          <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <input type="password" id="newPassword">
+          </div>
+          <div class="form-group">
+            <label for="confirmNewPassword">Confirm New Password</label>
+            <input type="password" id="confirmNewPassword">
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/vendor-dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastSewa Repair | Expert Home Maintenance</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">     
+    <link rel="stylesheet" href="css/footer.css">    
+    <link rel="stylesheet" href="css/chatbot.css">   
+    
+    <style>
+        /* --- PAGE STYLES --- */
+        body { background-color: #f3f4f6; font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+
+        /* Navbar Fix */
+        .navbar {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 15px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        }
+
+        /* Hero Section - Repair Theme (Industrial/Orange) */
+        .repair-hero {
+            position: relative; height: 65vh; min-height: 500px;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; color: white;
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            margin-top: 80px; overflow: hidden;
+        }
+
+        .repair-hero::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover; background-position: center; opacity: 0.3;
+        }
+
+        .hero-content { z-index: 2; padding: 0 20px; }
+        .hero-content h1 {
+            font-size: 3.5rem; font-weight: 700; margin-bottom: 15px;
+            background: linear-gradient(to right, #fb923c, #ea580c);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero-content p { font-size: 1.2rem; color: #cbd5e1; max-width: 700px; margin: 0 auto; }
+
+        .btn-hero {
+            padding: 12px 35px; background: #ea580c; color: white; border-radius: 50px;
+            font-weight: 600; margin-top: 25px; display: inline-block; text-decoration: none;
+            transition: 0.3s; box-shadow: 0 5px 15px rgba(234, 88, 12, 0.4);
+        }
+        .btn-hero:hover { transform: translateY(-3px); background: #c2410c; }
+
+        /* --- INNOVATIVE PACKAGES --- */
+        .packages-section { padding: 80px 0; background: #fff; }
+        .section-header { text-align: center; margin-bottom: 50px; }
+        .section-header h2 { font-size: 2.2rem; color: #1f2937; font-weight: 700; }
+        
+        .pricing-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;
+            max-width: 1200px; margin: 0 auto; padding: 0 20px;
+        }
+
+        .package-card {
+            background: white; border-radius: 16px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; transition: 0.3s;
+            display: flex; flex-direction: column;
+        }
+        .package-card:hover { transform: translateY(-8px); border-color: #ea580c; box-shadow: 0 20px 40px rgba(234, 88, 12, 0.1); }
+        
+        .pkg-img { height: 180px; width: 100%; object-fit: cover; }
+        .pkg-content { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .pkg-title { font-size: 1.4rem; font-weight: 700; color: #1f2937; margin-bottom: 5px; }
+        .pkg-price { font-size: 1.8rem; color: #ea580c; font-weight: 700; margin-bottom: 15px; }
+        .pkg-price span { font-size: 0.9rem; color: #64748b; font-weight: 400; }
+
+        .features-list { list-style: none; padding: 0; margin-bottom: 20px; flex-grow: 1; }
+        .features-list li { margin-bottom: 10px; color: #475569; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; }
+        .features-list li i { color: #ea580c; }
+
+        .btn-select {
+            width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer;
+            transition: 0.3s; background: #1f2937; color: white;
+        }
+        .btn-select:hover { background: #ea580c; }
+
+        /* --- VISUAL CATEGORIES --- */
+        .category-section { padding: 60px 0; background: #f3f4f6; }
+        .cat-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px;
+            max-width: 1200px; margin: 0 auto; padding: 0 20px;
+        }
+        .cat-card {
+            background: white; padding: 20px; border-radius: 12px; text-align: center;
+            cursor: pointer; transition: 0.3s; border: 1px solid transparent;
+        }
+        .cat-card:hover { border-color: #ea580c; transform: scale(1.05); }
+        .cat-icon { font-size: 2.5rem; color: #ea580c; margin-bottom: 10px; }
+        .cat-name { font-weight: 600; color: #374151; }
+
+        /* --- BOOKING FORM SECTION --- */
+        .booking-section { padding: 80px 0; background: #fff; }
+        .booking-container { display: flex; flex-wrap: wrap; gap: 50px; max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        /* Info Side */
+        .info-side { flex: 1; min-width: 300px; }
+        .trust-box {
+            background: #fff7ed; padding: 30px; border-radius: 16px; border: 1px solid #ffedd5;
+        }
+        .trust-item { display: flex; gap: 15px; margin-bottom: 20px; }
+        .trust-icon { 
+            width: 50px; height: 50px; background: #ea580c; color: white; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+
+        /* Form Side */
+        .form-side { flex: 1.2; min-width: 350px; }
+        .booking-form-card {
+            background: white; padding: 40px; border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;
+        }
+        
+        .form-header h3 { font-size: 1.5rem; color: #1f2937; margin-bottom: 5px; font-weight: 700; }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%; padding: 14px 15px; border: 1px solid #cbd5e1;
+            border-radius: 8px; font-size: 1rem; background-color: #ffffff;
+            color: #1f2937; outline: none; transition: 0.2s; margin-bottom: 20px;
+            font-family: 'Poppins', sans-serif; box-sizing: border-box;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: #ea580c; box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%; padding: 15px; background: #ea580c; color: white;
+            border: none; border-radius: 10px; font-weight: 600; font-size: 1.1rem;
+            cursor: pointer; transition: 0.3s;
+        }
+        .btn-submit:hover { background: #c2410c; }
+
+        /* Urgent Toggle */
+        .urgent-wrapper {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 20px; 
+            background: #fef2f2; padding: 10px; border-radius: 8px; border: 1px solid #fecaca;
+        }
+        .urgent-checkbox { width: 20px; height: 20px; accent-color: #dc2626; }
+
+        /* Mobile */
+        @media (max-width: 900px) {
+            .booking-container { flex-direction: column; }
+            .hero-content h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container" style="display: flex; justify-content: space-between; align-items: center; width: 90%; margin: 0 auto; max-width: 1200px;">
+            <div class="logo">
+                <a href="index.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                    <img src="images/logo1.png" alt="FS" style="height: 50px; width: auto;">
+                    <div style="font-size: 24px; font-weight: 800; color: #0f172a;">FastSewa<span> Repair</span></div>
+                </a>
+            </div>
+            <ul class="nav-links" style="display: flex; gap: 30px; list-style: none;">
+                <li><a href="index.html" style="color: #0f172a; font-weight: 500; text-decoration: none;">Home</a></li>
+                <li><a href="index.html#services" style="color: #0f172a; font-weight: 500; text-decoration: none;">Services</a></li>
+                <li id="auth-action">
+                    <a href="login.html" style="padding: 10px 25px; border-radius: 50px; background: #ea580c; color: white; font-weight: 600; text-decoration: none;">Login/Signup</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="repair-hero">
+        <div class="hero-content">
+            <h1>Expert Home Repairs</h1>
+            <p>From quick fixes to smart home upgrades. Fast, Reliable & Verified Professionals.</p>
+            <a href="#book-repair" class="btn-hero">Book a Service</a>
+        </div>
+    </header>
+
+    <section class="category-section">
+        <div class="section-header">
+            <h2>What needs fixing?</h2>
+        </div>
+        <div class="cat-grid">
+            <div class="cat-card" onclick="selectService('Electrical')">
+                <div class="cat-icon"><i class="fas fa-bolt"></i></div>
+                <div class="cat-name">Electrical</div>
+            </div>
+            <div class="cat-card" onclick="selectService('Plumbing')">
+                <div class="cat-icon"><i class="fas fa-faucet"></i></div>
+                <div class="cat-name">Plumbing</div>
+            </div>
+            <div class="cat-card" onclick="selectService('AC Repair')">
+                <div class="cat-icon"><i class="fas fa-snowflake"></i></div>
+                <div class="cat-name">AC Repair</div>
+            </div>
+            <div class="cat-card" onclick="selectService('Carpentry')">
+                <div class="cat-icon"><i class="fas fa-hammer"></i></div>
+                <div class="cat-name">Carpentry</div>
+            </div>
+            <div class="cat-card" onclick="selectService('Appliances')">
+                <div class="cat-icon"><i class="fas fa-tv"></i></div>
+                <div class="cat-name">Appliances</div>
+            </div>
+            <div class="cat-card" onclick="selectService('Painting')">
+                <div class="cat-icon"><i class="fas fa-paint-roller"></i></div>
+                <div class="cat-name">Painting</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="packages-section">
+        <div class="section-header">
+            <h2>Popular Service Packages</h2>
+            <p style="color:#64748b;">Save more with our bundled solutions.</p>
+        </div>
+        <div class="pricing-grid">
+            
+            <div class="package-card">
+                <img src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="pkg-img" alt="Repair Man">
+                <div class="pkg-content">
+                    <div class="pkg-title">The Quick Fix</div>
+                    <div class="pkg-price">₹199 <span>/ visit charge</span></div>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check"></i> Inspection & Minor Repair</li>
+                        <li><i class="fas fa-check"></i> 60 Mins Response Time</li>
+                        <li><i class="fas fa-check"></i> 30 Days Service Warranty</li>
+                    </ul>
+                    <button class="btn-select" onclick="selectService('Quick Fix Visit')">Book Now</button>
+                </div>
+            </div>
+
+            <div class="package-card" style="border: 2px solid #ea580c;">
+                <div style="position: absolute; top: 15px; right: -30px; background: #ea580c; color: white; padding: 5px 40px; transform: rotate(45deg); font-size: 0.8rem; font-weight: bold;">Best Value</div>
+                <img src="https://images.unsplash.com/photo-1581578731117-10d52143b0d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="pkg-img" alt="Home Shield">
+                <div class="pkg-content">
+                    <div class="pkg-title">Home Shield (AMC)</div>
+                    <div class="pkg-price">₹2,999 <span>/ year</span></div>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check"></i> <b>3 Free Service Visits</b></li>
+                        <li><i class="fas fa-check"></i> Unlimited Minor Repairs</li>
+                        <li><i class="fas fa-check"></i> AC & RO Service Included</li>
+                        <li><i class="fas fa-check"></i> Priority Support</li>
+                    </ul>
+                    <button class="btn-select" style="background: #ea580c;" onclick="selectService('Home Shield AMC')">Subscribe</button>
+                </div>
+            </div>
+
+            <div class="package-card">
+                <img src="https://images.unsplash.com/photo-1558002038-1091a1661116?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="pkg-img" alt="Smart Home">
+                <div class="pkg-content">
+                    <div class="pkg-title">Smart Home Setup</div>
+                    <div class="pkg-price">₹999 <span>/ installation</span></div>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check"></i> CCTV Camera Installation</li>
+                        <li><i class="fas fa-check"></i> Smart Door Lock Setup</li>
+                        <li><i class="fas fa-check"></i> Alexa/Google Home Config</li>
+                        <li><i class="fas fa-check"></i> WiFi Networking</li>
+                    </ul>
+                    <button class="btn-select" onclick="selectService('Smart Home Setup')">Get Smart</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="book-repair" class="booking-section">
+        <div class="booking-container">
+            
+            <div class="info-side">
+                <div class="trust-box">
+                    <h3 style="color:#ea580c; margin-bottom: 20px;">Why FastSewa Repair?</h3>
+                    
+                    <div class="trust-item">
+                        <div class="trust-icon"><i class="fas fa-user-shield"></i></div>
+                        <div>
+                            <h4 style="margin:0;">Verified Pros</h4>
+                            <p style="margin:0; font-size:0.9rem; color:#666;">Background checked & trained experts.</p>
+                        </div>
+                    </div>
+
+                    <div class="trust-item">
+                        <div class="trust-icon"><i class="fas fa-clock"></i></div>
+                        <div>
+                            <h4 style="margin:0;">On-Time Service</h4>
+                            <p style="margin:0; font-size:0.9rem; color:#666;">We respect your time. Penalty if late.</p>
+                        </div>
+                    </div>
+
+                    <div class="trust-item">
+                        <div class="trust-icon"><i class="fas fa-tools"></i></div>
+                        <div>
+                            <h4 style="margin:0;">30 Days Warranty</h4>
+                            <p style="margin:0; font-size:0.9rem; color:#666;">If it breaks again, we fix it for free.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-side">
+                <div class="booking-form-card">
+                    <div class="form-header">
+                        <h3>Book a Service</h3>
+                        <p>Fill details to schedule a visit.</p>
+                    </div>
+                    
+                    <form id="repairForm">
+                        <input type="text" id="fullName" class="form-input" required placeholder="Full Name">
+                        
+                        <div style="display: flex; gap: 15px;">
+                            <input type="tel" id="phone" class="form-input" required placeholder="Phone Number">
+                            <input type="date" id="date" class="form-input" required>
+                        </div>
+
+                        <select id="serviceType" class="form-select" required>
+                            <option value="" disabled selected>Select Service</option>
+                            <optgroup label="Repairs">
+                                <option value="Electrical Repair">Electrical Repair</option>
+                                <option value="Plumbing Work">Plumbing Work</option>
+                                <option value="AC Service">AC Service/Repair</option>
+                                <option value="Carpentry">Carpentry</option>
+                            </optgroup>
+                            <optgroup label="Packages">
+                                <option value="Quick Fix Visit">Quick Fix Visit (₹199)</option>
+                                <option value="Home Shield AMC">Home Shield AMC (₹2999)</option>
+                                <option value="Smart Home Setup">Smart Home Setup</option>
+                            </optgroup>
+                        </select>
+
+                        <div class="urgent-wrapper">
+                            <input type="checkbox" id="urgent" class="urgent-checkbox">
+                            <label for="urgent" style="font-size: 0.9rem; color: #dc2626; font-weight: 600;">
+                                <i class="fas fa-bolt"></i> Urgent: Need within 60 mins (+₹100)
+                            </label>
+                        </div>
+
+                        <textarea id="message" class="form-textarea" rows="3" placeholder="Describe the issue (e.g. Fan not working, Tap leaking)..."></textarea>
+
+                        <button type="submit" id="submitBtn" class="btn-submit">Confirm Booking</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <div id="fastsewa-footer"></div>
+
+    <button class="fastsewa-chatbot-toggle" id="toggleBtn"><i class="fas fa-comment-dots"></i></button>
+    <div class="fastsewa-chatbot-container" id="chatbox" style="display: none;">
+        <div class="fastsewa-chatbot-header">
+            <div><i class="fas fa-robot"></i> FastSewa AI</div>
+            <button id="closeBtn" style="background:none; border:none; color:white; cursor:pointer;">✕</button>
+        </div>
+        <div class="fastsewa-chatbot-body" id="chatBody"></div>
+        <div class="fastsewa-chatbot-footer">
+            <input id="chatInput" class="fastsewa-chatbot-input" placeholder="Type message..." />
+            <button class="fastsewa-chatbot-send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script src="js/footer.js"></script>
+    <script src="js/chatbot.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+    <script>
+        // --- 1. Selection Logic ---
+        function selectService(serviceName) {
+            document.getElementById('serviceType').value = serviceName;
+            document.getElementById('book-repair').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- 2. EMAILJS LOGIC ---
+        (function () { 
+            emailjs.init("82w8_I7wL3TeHxJa6"); // YOUR PUBLIC KEY
+        })();
+
+        document.getElementById("repairForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const isUrgent = document.getElementById('urgent').checked ? "URGENT (60 Mins)" : "Standard";
+            
+            btn.innerHTML = 'Booking... <i class="fas fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+
+            const formData = {
+                from_name: document.getElementById('fullName').value,
+                message: `
+                    Phone: ${document.getElementById('phone').value}
+                    Date: ${document.getElementById('date').value}
+                    Service: ${document.getElementById('serviceType').value}
+                    Priority: ${isUrgent}
+                    Issue: ${document.getElementById('message').value}
+                `
+            };
+
+            emailjs.send("service_ap93y7a", "template_hvuzvq9", formData)
+            .then(function() {
+                alert("✅ Booking Confirmed! Our technician will call you shortly.");
+                document.getElementById("repairForm").reset();
+                btn.innerHTML = 'Confirm Booking';
+                btn.disabled = false;
+            }, function(error) {
+                alert("❌ Booking Failed. Please check connection.");
+                btn.innerHTML = 'Confirm Booking';
+                btn.disabled = false;
+            });
+        });
+
+        // --- 3. AUTH LOGIC ---
+        document.addEventListener("DOMContentLoaded", function() {
+            const rawUser = localStorage.getItem("fastsewa_current_user") || localStorage.getItem("fastsewaUser");
+            let user = null;
+            try { user = rawUser ? JSON.parse(rawUser) : null; } catch { user = null; }
+            const token = localStorage.getItem("fastsewaToken") || localStorage.getItem("fastsewa_token");
+            const authAction = document.getElementById("auth-action");
+
+            if (user && token && authAction) {
+                const displayName =
+                    user.name ||
+                    user.fullName ||
+                    `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                    user.email ||
+                    'User';
+                const firstName = displayName.split(" ")[0] || 'User';
+                authAction.innerHTML = `
+                    <div class="user-nav-profile" style="position: relative; display: inline-block;">
+                        <a href="dashboard.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; background: white; padding: 5px 15px 5px 5px; border-radius: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 1px solid #eee;">
+                            <div style="width: 35px; height: 35px; background: #ea580c; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                ${firstName.charAt(0).toUpperCase()}
+                            </div>
+                            <span style="font-weight: 600; font-size: 14px; color: #333;">${firstName}</span>
+                        </a>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastSewa - Solution & Support Hub</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">     
+    <link rel="stylesheet" href="css/footer.css">    
+    <link rel="stylesheet" href="css/chatbot.css">   
+    
+    <style>
+        /* --- PAGE SPECIFIC STYLES --- */
+        body { background-color: #f8fafc; font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+
+        /* Navbar Fix */
+        .navbar {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 15px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        }
+
+        /* Hero Section - Support Theme (Blue/Indigo) */
+        .support-hero {
+            position: relative; height: 60vh; min-height: 500px;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center; color: white;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            margin-top: 80px; overflow: hidden;
+        }
+
+        .support-hero::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover; background-position: center; opacity: 0.15;
+        }
+
+        .hero-content { z-index: 2; padding: 0 20px; }
+        .hero-content h1 {
+            font-size: 3.5rem; font-weight: 700; margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, #a5b4fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero-content p { font-size: 1.2rem; color: #e0e7ff; max-width: 700px; margin: 0 auto 30px; }
+
+        /* Search Bar */
+        .search-box {
+            background: white; padding: 10px 20px; border-radius: 50px;
+            display: flex; align-items: center; max-width: 600px; margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .search-box input {
+            border: none; outline: none; flex: 1; padding: 10px; font-size: 1rem;
+        }
+        .search-box button {
+            background: #4338ca; color: white; border: none; padding: 10px 25px;
+            border-radius: 30px; cursor: pointer; font-weight: 600; transition: 0.3s;
+        }
+        .search-box button:hover { background: #3730a3; }
+
+        /* --- SOLUTIONS GRID --- */
+        .solutions-section { padding: 80px 0; background: #fff; }
+        .section-header { text-align: center; margin-bottom: 50px; }
+        .section-header h2 { font-size: 2.5rem; color: #1e1b4b; font-weight: 700; }
+        
+        .grid-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;
+            max-width: 1200px; margin: 0 auto; padding: 0 20px;
+        }
+
+        .solution-card {
+            background: white; border-radius: 16px; padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
+            transition: 0.3s; position: relative; overflow: hidden; display: flex; flex-direction: column;
+        }
+        .solution-card:hover { transform: translateY(-8px); border-color: #4338ca; box-shadow: 0 20px 40px rgba(67, 56, 202, 0.1); }
+        
+        .card-icon {
+            width: 60px; height: 60px; background: #e0e7ff; color: #4338ca;
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; margin-bottom: 20px;
+        }
+
+        .solution-card h3 { font-size: 1.4rem; color: #1e1b4b; margin-bottom: 10px; }
+        .solution-card p { color: #64748b; font-size: 0.95rem; margin-bottom: 20px; flex-grow: 1; }
+
+        .card-link {
+            color: #4338ca; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+        }
+        .card-link:hover { gap: 10px; transition: 0.3s; }
+
+        /* --- PROCESS STEPS --- */
+        .process-section { padding: 80px 0; background: #f8fafc; }
+        .step-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px;
+            max-width: 1100px; margin: 0 auto; padding: 0 20px;
+        }
+        .step-card { text-align: center; }
+        .step-num {
+            width: 50px; height: 50px; background: #4338ca; color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; font-weight: bold; margin: 0 auto 15px;
+        }
+        .step-card h4 { font-size: 1.1rem; color: #1e1b4b; margin-bottom: 5px; }
+        .step-card p { font-size: 0.9rem; color: #64748b; }
+
+        /* --- CONTACT SECTION --- */
+        .contact-section { padding: 80px 0; background: #fff; }
+        .contact-wrapper {
+            display: flex; flex-wrap: wrap; gap: 50px; max-width: 1100px; margin: 0 auto; padding: 0 20px;
+        }
+        
+        .contact-info { flex: 1; min-width: 300px; }
+        .info-box {
+            display: flex; align-items: flex-start; gap: 15px; margin-bottom: 25px;
+            background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0;
+        }
+        .info-box i { font-size: 1.5rem; color: #4338ca; margin-top: 3px; }
+        
+        .contact-form { flex: 1.2; min-width: 350px; }
+        .form-box {
+            background: white; padding: 40px; border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.08); border: 1px solid #e2e8f0;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%; padding: 14px; border: 1px solid #cbd5e1; border-radius: 8px;
+            font-size: 1rem; margin-bottom: 20px; outline: none; transition: 0.3s;
+            font-family: 'Poppins', sans-serif; box-sizing: border-box;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: #4338ca; }
+
+        .btn-submit {
+            width: 100%; padding: 15px; background: #4338ca; color: white;
+            border: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem;
+            cursor: pointer; transition: 0.3s;
+        }
+        .btn-submit:hover { background: #3730a3; }
+
+        /* Responsive */
+        @media(max-width: 900px) {
+            .contact-wrapper { flex-direction: column; }
+            .hero-content h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container" style="display: flex; justify-content: space-between; align-items: center; width: 90%; margin: 0 auto; max-width: 1200px;">
+            <div class="logo">
+                <a href="index.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                    <img src="images/logo1.png" alt="FS" style="height: 50px; width: auto;">
+                    <div style="font-size: 24px; font-weight: 800; color: #0f172a;">FastSewa<span> Solutions</span></div>
+                </a>
+            </div>
+            <ul class="nav-links" style="display: flex; gap: 30px; list-style: none;">
+                <li><a href="index.html" style="color: #0f172a; font-weight: 500; text-decoration: none;">Home</a></li>
+                <li><a href="#services" style="color: #0f172a; font-weight: 500; text-decoration: none;">Services</a></li>
+                <li id="auth-action">
+                    <a href="login.html" style="padding: 10px 25px; border-radius: 50px; background: #4338ca; color: white; font-weight: 600; text-decoration: none;">Login/Signup</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="support-hero">
+        <div class="hero-content">
+            <h1>Your One-Stop <br>Solution Hub</h1>
+            <p>From construction to legal aid, we provide 360° support for all your needs. Verified experts, transparent process.</p>
+            
+            <div class="search-box">
+                <input type="text" placeholder="What help do you need today? (e.g. Plumber, Lawyer)">
+                <button onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Find Help</button>
+            </div>
+        </div>
+    </header>
+
+    <section id="services" class="solutions-section">
+        <div class="section-header">
+            <h2>Explore Our Services</h2>
+            <p style="color:#64748b;">9 Specialized Verticals. One Trusted Platform.</p>
+        </div>
+        
+        <div class="grid-container">
+            
+            <div class="solution-card">
+                <div class="card-icon" style="color:#f59e0b; background:#fef3c7;"><i class="fas fa-hard-hat"></i></div>
+                <h3>Construction</h3>
+                <p>Residential & commercial building projects with turnkey solutions and material supply.</p>
+                <a href="newconstruction.html" class="card-link" style="color:#f59e0b;">Explore Construction <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="solution-card">
+                <div class="card-icon" style="color:#16a34a; background:#dcfce7;"><i class="fas fa-heartbeat"></i></div>
+                <h3>Medical Aid</h3>
+                <p>24/7 Ambulance, Nurse hiring, Doctor visits, and Hospital OT booking.</p>
+                <a href="medical.html" class="card-link" style="color:#16a34a;">Get Medical Help <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="solution-card">
+                <div class="card-icon" style="color:#2563eb; background:#dbeafe;"><i class="fas fa-gavel"></i></div>
+                <h3>Legal & GST</h3>
+                <p>Business registration, GST filing, ITR, and corporate legal advisory.</p>
+                <a href="legal.html" class="card-link" style="color:#2563eb;">Legal Services <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="solution-card">
+                <div class="card-icon" style="color:#dc2626; background:#fee2e2;"><i class="fas fa-shield-alt"></i></div>
+                <h3>Security</h3>
+                <p>Hire trained security guards, bouncers, and PSOs for events or offices.</p>
+                <a href="security.html" class="card-link" style="color:#dc2626;">Hire Security <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="solution-card">
+                <div class="card-icon" style="color:#7c3aed; background:#ede9fe;"><i class="fas fa-map-marked-alt"></i></div>
+                <h3>Land Verify</h3>
+                <p>Digital land record check, legal verification, and physical survey.</p>
+                <a href="land.html" class="card-link" style="color:#7c3aed;">Check Property <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="solution-card">
+                <div class="card-icon" style="color:#ea580c; background:#ffedd5;"><i class="fas fa-tools"></i></div>
+                <h3>Home Repair</h3>
+                <p>Electricians, Plumbers, Carpenters, and AC technicians at your doorstep.</p>
+                <a href="repair.html" class="card-link" style="color:#ea580c;">Book Repair <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="process-section">
+        <div class="section-header">
+            <h2>How FastSewa Works</h2>
+            <p style="color:#64748b;">Simple steps to get your job done.</p>
+        </div>
+        <div class="step-container">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h4>Choose Service</h4>
+                <p>Select the service you need from our extensive list.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h4>Book & Pay</h4>
+                <p>Fill details and pay a small booking amount securely.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h4>Expert Assigned</h4>
+                <p>We assign a verified professional to your task instantly.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">4</div>
+                <h4>Job Done</h4>
+                <p>Service delivered with quality assurance & support.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-wrapper">
+                
+                <div class="contact-info">
+                    <h2 style="color:#1e1b4b; margin-bottom:20px;">Still have questions?</h2>
+                    <p style="color:#64748b; margin-bottom:30px;">Our support team is available to assist you with any queries regarding our services.</p>
+                    
+                    <div class="info-box">
+                        <i class="fas fa-phone-alt"></i>
+                        <div>
+                            <h4 style="margin:0;">Call Support</h4>
+                            <p style="margin:0; color:#666;">+91 82757 23755</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4 style="margin:0;">Email Us</h4>
+                            <p style="margin:0; color:#666;">fastsewa2020@gmail.com</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4 style="margin:0;">Visit Office</h4>
+                            <p style="margin:0; color:#666;">B Hub, Gandhi Maidan, Patna</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form">
+                    <div class="form-box">
+                        <h3 style="margin-bottom: 20px; color:#1e1b4b;">Send a Message</h3>
+                        <form id="supportForm">
+                            <input type="text" name="name" class="form-input" required placeholder="Your Name">
+                            <input type="email" name="email" class="form-input" required placeholder="Your Email">
+                            
+                            <select name="department" class="form-select">
+                                <option>General Inquiry</option>
+                                <option>Technical Support</option>
+                                <option>Billing Issue</option>
+                                <option>Partner with Us</option>
+                            </select>
+
+                            <textarea name="message" class="form-textarea" rows="4" placeholder="How can we help you?"></textarea>
+                            
+                            <button type="submit" class="btn-submit">Submit Request</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <div id="fastsewa-footer"></div>
+
+    <button class="fastsewa-chatbot-toggle" id="toggleBtn"><i class="fas fa-comment-dots"></i></button>
+    <div class="fastsewa-chatbot-container" id="chatbox" style="display: none;">
+        <div class="fastsewa-chatbot-header">
+            <div><i class="fas fa-robot"></i> FastSewa AI</div>
+            <button id="closeBtn" style="background:none; border:none; color:white; cursor:pointer;">✕</button>
+        </div>
+        <div class="fastsewa-chatbot-body" id="chatBody"></div>
+        <div class="fastsewa-chatbot-footer">
+            <input id="chatInput" class="fastsewa-chatbot-input" placeholder="Type message..." />
+            <button class="fastsewa-chatbot-send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script src="js/footer.js"></script>
+    <script src="js/chatbot.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+    <script>
+        // --- 1. EMAILJS LOGIC ---
+        (function () { 
+            emailjs.init("82w8_I7wL3TeHxJa6"); // YOUR PUBLIC KEY
+        })();
+
+        document.getElementById("supportForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const btn = document.querySelector('.btn-submit');
+            
+            btn.innerHTML = 'Sending...';
+            btn.disabled = true;
+
+            emailjs.sendForm("service_ap93y7a", "template_hvuzvq9", this)
+            .then(function() {
+                alert("✅ Message Sent! We will get back to you shortly.");
+                document.getElementById("supportForm").reset();
+                btn.innerHTML = 'Submit Request';
+                btn.disabled = false;
+            }, function(error) {
+                alert("❌ Failed to send. Please try again.");
+                btn.innerHTML = 'Submit Request';
+                btn.disabled = false;
+            });
+        });
+
+        // --- 2. AUTH LOGIC ---
+        document.addEventListener("DOMContentLoaded", function() {
+            const rawUser = localStorage.getItem("fastsewa_current_user") || localStorage.getItem("fastsewaUser");
+            let user = null;
+            try { user = rawUser ? JSON.parse(rawUser) : null; } catch { user = null; }
+            const token = localStorage.getItem("fastsewaToken") || localStorage.getItem("fastsewa_token");
+            const authAction = document.getElementById("auth-action");
+
+            if (user && token && authAction) {
+                const displayName =
+                    user.name ||
+                    user.fullName ||
+                    `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                    user.email ||
+                    'User';
+                const firstName = displayName.split(" ")[0] || 'User';
+                authAction.innerHTML = `
+                    <div class="user-nav-profile" style="position: relative; display: inline-block;">
+                        <a href="dashboard.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; background: #4338ca; padding: 5px 15px 5px 5px; border-radius: 30px;">
+                            <div style="width: 35px; height: 35px; background: white; color: #4338ca; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                ${firstName.charAt(0).toUpperCase()}
+                            </div>
+                            <span style="font-weight: 600; font-size: 14px; color: white;">${firstName}</span>
+                        </a>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms & Conditions | FastSewa Super Portal</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/style.css">     
+    <link rel="stylesheet" href="css/footer.css">    
+    <link rel="stylesheet" href="css/chatbot.css">   
+    
+    <style>
+        :root {
+            --primary: #ff5722;
+            --dark-blue: #0f172a;
+            --bg-light: #f8fafc;
+            --text-main: #334155;
+        }
+
+        body { 
+            background-color: var(--bg-light); 
+            font-family: 'Poppins', sans-serif; 
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* Navbar Correction */
+        .navbar {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 12px 0;
+        }
+
+        /* Professional Header */
+        .terms-hero {
+            background: linear-gradient(135deg, var(--dark-blue) 0%, #1e293b 100%);
+            padding: 160px 20px 100px;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+        .terms-hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 10px; letter-spacing: -1px; }
+        .terms-hero p { opacity: 0.7; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            margin: -50px auto 100px;
+            padding: 0 20px;
+        }
+
+        /* Left Side: Sticky Navigation */
+        .terms-nav {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .terms-nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .terms-nav a:hover, .terms-nav a.active {
+            background: rgba(255, 87, 34, 0.1);
+            color: var(--primary);
+        }
+
+        /* Right Side: Main Text */
+        .terms-body {
+            background: white;
+            padding: 60px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+        }
+
+        .terms-section { margin-bottom: 50px; scroll-margin-top: 120px; }
+        .terms-section h2 { 
+            color: var(--dark-blue); 
+            font-size: 1.6rem; 
+            margin-bottom: 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+        .terms-section h2 i { color: var(--primary); font-size: 1.3rem; }
+        
+        .terms-section p { margin-bottom: 18px; font-size: 1rem; color: #475569; text-align: justify; }
+        .terms-section ul { padding-left: 20px; margin-bottom: 20px; list-style: square; color: #475569; }
+        .terms-section li { margin-bottom: 8px; }
+
+        .last-update-badge {
+            background: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        /* Custom Alert Box */
+        .legal-note {
+            background: #fff7ed;
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+            font-style: italic;
+        }
+
+        /* Mobile View */
+        @media (max-width: 992px) {
+            .content-wrapper { grid-template-columns: 1fr; margin-top: 20px; }
+            .terms-nav { display: none; }
+            .terms-body { padding: 30px 20px; }
+            .terms-hero h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-container" style="display: flex; justify-content: space-between; align-items: center; width: 90%; margin: 0 auto; max-width: 1200px;">
+            <div class="logo">
+                <a href="index.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                    <img src="images/logo1.png" alt="FS" style="height: 50px; width: auto;">
+                    <div style="font-size: 24px; font-weight: 800; color: #0f172a;">FastSewa<span>.</span></div>
+                </a>
+            </div>
+            <ul class="nav-links" style="display: flex; gap: 30px; list-style: none;">
+                <li><a href="index.html" style="color: #0f172a; font-weight: 500; text-decoration: none;">Home</a></li>
+                <li><a href="about.html" style="color: #0f172a; font-weight: 500; text-decoration: none;">About</a></li>
+                <li id="auth-action">
+                    <a href="login.html" style="padding: 10px 25px; border-radius: 50px; background: #ff5722; color: white; font-weight: 600; text-decoration: none;">Login</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="terms-hero">
+        <div class="container">
+            <h1>Legal Terms of Service</h1>
+            <p>Transparency and trust are our core values. Please review how we operate and protect your interests.</p>
+        </div>
+    </header>
+
+    <main class="content-wrapper">
+        <aside class="terms-nav">
+            <h4 style="margin-bottom: 10px; color: var(--dark-blue);">Quick Links</h4>
+            <a href="#acceptance">1. Acceptance</a>
+            <a href="#services">2. Scope of Services</a>
+            <a href="#payments">3. Payments & Fees</a>
+            <a href="#privacy">4. User Privacy</a>
+            <a href="#liability">5. Our Liability</a>
+            <a href="#governing">6. Law & Disputes</a>
+        </aside>
+
+        <article class="terms-body">
+            <span class="last-update-badge">UPDATED: JAN 03, 2026</span>
+            
+            <section id="acceptance" class="terms-section">
+                <h2><i class="fas fa-handshake"></i> 1. Acceptance of Agreement</h2>
+                <p>Welcome to FastSewa Super Portal. By using our website, mobile application, or any services provided by us, you agree to be legally bound by these Terms and Conditions. If you disagree with any part of these terms, you must immediately cease all use of our platform.</p>
+                <div class="legal-note">
+                    By clicking "I Agree" or by simply browsing the portal, you enter into a binding legal contract with FastSewa Facilities®.
+                </div>
+            </section>
+
+            <section id="services" class="terms-section">
+                <h2><i class="fas fa-tools"></i> 2. Scope of Services</h2>
+                <p>FastSewa acts as a technology aggregator and service facilitator. We connect users with verified professionals across various sectors including but not limited to:</p>
+                <ul>
+                    <li>Construction & Architectural Planning</li>
+                    <li>Legal & GST Compliance Services</li>
+                    <li>Medical Emergency Support & Nursing</li>
+                    <li>Security Manpower (Guards & Bouncers)</li>
+                    <li>Property & Land Verification</li>
+                </ul>
+                <p>While we conduct background checks, the final service delivery quality is a joint responsibility of the assigned professional and the company.</p>
+            </section>
+
+            <section id="payments" class="terms-section">
+                <h2><i class="fas fa-credit-card"></i> 3. Payments, Cancellations & Refunds</h2>
+                <p><strong>3.1 Booking Fees:</strong> A nominal booking amount is collected to initiate service requests. This amount is adjusted against the final invoice.</p>
+                <p><strong>3.2 Refunds:</strong> Refunds are eligible only if the service has not been initiated or assigned within 48 hours of payment. Once a professional is dispatched or a document process (like GST) starts, no refunds will be issued.</p>
+                <p><strong>3.3 Taxes:</strong> All listed prices on the portal are exclusive of 18% GST unless otherwise stated.</p>
+            </section>
+
+            <section id="privacy" class="terms-section">
+                <h2><i class="fas fa-user-shield"></i> 4. Data Privacy & Security</h2>
+                <p>Your data security is our priority. We use SSL encryption to protect your personal details. We do not sell your data to third-party marketing firms. Information is only shared with the specific partner assigned to your task.</p>
+            </section>
+
+            <section id="liability" class="terms-section">
+                <h2><i class="fas fa-balance-scale"></i> 5. Limitation of Liability</h2>
+                <p>FastSewa Super Portal and its founders shall not be liable for any indirect, incidental, or consequential damages resulting from the use of our services. In cases of construction projects, users are advised to verify site measurements before making large material payments.</p>
+            </section>
+
+            <section id="governing" class="terms-section">
+                <h2><i class="fas fa-gavel"></i> 6. Governing Law & Jurisdiction</h2>
+                <p>These Terms shall be governed by and construed in accordance with the laws of the Republic of India. Any dispute arising under these terms shall be subject to the exclusive jurisdiction of the courts located in <strong>Patna, Bihar</strong>.</p>
+            </section>
+
+            <div style="text-align: center; border-top: 1px solid #eee; padding-top: 40px; margin-top: 40px;">
+                <p style="font-weight: 600;">Need a PDF copy or have questions?</p>
+                <a href="mailto:fastsewa2020@gmail.com" class="learn-more" style="justify-content: center; font-size: 1.1rem; color: var(--primary);">
+                    Email: fastsewa2020@gmail.com
+                </a>
+            </div>
+        </article>
+    </main>
+
+    <div id="fastsewa-footer"></div>
+
+    <button class="fastsewa-chatbot-toggle" id="toggleBtn"><i class="fas fa-comment-dots"></i></button>
+    <div class="fastsewa-chatbot-container" id="chatbox" style="display: none;">
+        <div class="fastsewa-chatbot-header">
+            <div><i class="fas fa-robot"></i> FastSewa AI</div>
+            <button id="closeBtn" style="background:none; border:none; color:white; cursor:pointer;">✕</button>
+        </div>
+        <div class="fastsewa-chatbot-body" id="chatBody"></div>
+        <div class="fastsewa-chatbot-footer">
+            <input id="chatInput" class="fastsewa-chatbot-input" placeholder="Type message..." />
+            <button class="fastsewa-chatbot-send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script src="js/footer.js"></script>
+    <script src="js/chatbot.js"></script>
+    
+    <script>
+        // Profile persistence
+        document.addEventListener("DOMContentLoaded", function() {
+            const rawUser = localStorage.getItem("fastsewa_current_user") || localStorage.getItem("fastsewaUser");
+            let user = null;
+            try { user = rawUser ? JSON.parse(rawUser) : null; } catch { user = null; }
+            const token = localStorage.getItem("fastsewaToken") || localStorage.getItem("fastsewa_token");
+            const authAction = document.getElementById("auth-action");
+
+            if (user && token && authAction) {
+                const displayName =
+                    user.name ||
+                    user.fullName ||
+                    `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                    user.email ||
+                    'User';
+                const firstName = displayName.split(" ")[0] || 'User';
+                authAction.innerHTML = `
+                    <div class="user-nav-profile" style="position: relative; display: inline-block;">
+                        <a href="dashboard.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; background: #ff5722; padding: 5px 15px 5px 5px; border-radius: 30px;">
+                            <div style="width: 35px; height: 35px; background: white; color: #ff5722; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                ${firstName.charAt(0).toUpperCase()}
+                            </div>
+                            <span style="font-weight: 600; font-size: 14px; color: white;">${firstName}</span>
+                        </a>
+                    </div>
+                `;
+            }
+
+            // Simple scroll highlight for nav
+            const links = document.querySelectorAll('.terms-nav a');
+            window.addEventListener('scroll', () => {
+                let curr = "";
+                document.querySelectorAll('.terms-section').forEach(section => {
+                    const top = section.offsetTop;
+                    if(pageYOffset >= top - 150) curr = section.getAttribute('id');
+                });
+                links.forEach(link => {
+                    link.classList.remove('active');
+                    if(link.getAttribute('href') == `#${curr}`) link.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
