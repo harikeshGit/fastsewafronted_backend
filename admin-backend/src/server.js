@@ -16,6 +16,7 @@ const exportRoutes = require('./routes/exports');
 const vendorAuthRoutes = require('./routes/vendorAuth');
 const vendorRoutes = require('./routes/vendor');
 const adminVendorRoutes = require('./routes/adminVendors');
+const adminUserRoutes = require('./routes/adminUsers');
 const publicVendorRoutes = require('./routes/publicVendors');
 const serviceRequestRoutes = require('./routes/serviceRequests');
 const Admin = require('./models/Admin');
@@ -117,6 +118,7 @@ app.use('/api/export', exportRoutes);
 app.use('/api/vendor/auth', vendorAuthRoutes);
 app.use('/api/vendor', vendorRoutes);
 app.use('/api/admin', adminVendorRoutes);
+app.use('/api/admin', adminUserRoutes);
 app.use('/api/public', publicVendorRoutes);
 app.use('/api/service-requests', serviceRequestRoutes);
 

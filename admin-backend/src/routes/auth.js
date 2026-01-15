@@ -2,11 +2,54 @@ const express = require('express');
 const Admin = require('../models/Admin');
 const User = require('../models/User');
 const { generateToken, authMiddleware } = require('../middleware/auth');
+const { requireAdmin } = require('../middleware/requireAdmin');
 
 const { OAuth2Client } = require('google-auth-library');
 const { fetch } = require('undici');
+const { normalizeEmail, isValidEmail, emailEqualsQuery, isAllowedEmailDomain } = require('../utils/email');
+const { generateNumericOtp, hashOtp, constantTimeEqualHex } = require('../utils/otp');
+const { sendEmail, isEmailOtpDevMode } = require('../utils/mailer');
 
 const router = express.Router();
+
+// Validate current session token and return current principal
+router.get('/me', authMiddleware, async (req, res) => {
+    try {
+        const principalId = req.admin?.adminId;
+        if (!principalId) return res.status(401).json({ success: false, error: 'Unauthorized' });
+
+        const user = await User.findOne({ _id: principalId, isActive: true }).select('-password');
+        if (user) {
+            // If local auth and not verified, treat as not authenticated.
+            if (user.authProvider === 'local' && !user.emailVerified) {
+                return res.status(401).json({ success: false, error: 'Email not verified' });
+            }
+
+            return res.json({
+                success: true,
+                user: buildUserResponse(user, 'user')
+            });
+        }
+
+        const admin = await Admin.findOne({ _id: principalId, status: 'approved' }).select('-password');
+        if (admin) {
+            return res.json({
+                success: true,
+                user: {
+                    _id: admin._id,
+                    name: admin.username || admin.email,
+                    email: admin.email,
+                    role: 'admin',
+                    userType: null,
+                }
+            });
+        }
+
+        return res.status(401).json({ success: false, error: 'Unauthorized' });
+    } catch {
+        return res.status(500).json({ success: false, error: 'Server error' });
+    }
+});
 
 function buildUserResponse(user, role = 'user') {
     return {
@@ -34,9 +77,19 @@ router.post('/login', async (req, res) => {
         return res.status(400).json({ error: 'Email and password required' });
     }
 
+    const identity = String(email).trim();
+    const looksLikeEmail = identity.includes('@');
+    if (looksLikeEmail && !isValidEmail(identity)) {
+        return res.status(400).json({ error: 'Invalid email address' });
+    }
+
     try {
-        // First check in User collection
-        let user = await User.findOne({ email, isActive: true });
+        const normalizedEmail = looksLikeEmail ? normalizeEmail(identity) : null;
+
+        // First check in User collection (email only)
+        let user = looksLikeEmail
+            ? await User.findOne({ email: emailEqualsQuery(normalizedEmail), isActive: true })
+            : null;
         let role = 'user';
 
         // If not found in User, check in Admin collection
@@ -44,13 +97,19 @@ router.post('/login', async (req, res) => {
             // Accept either admin email or admin username in the "email" field for compatibility
             user = await Admin.findOne({
                 status: 'approved',
-                $or: [{ email }, { username: email }]
+                $or: looksLikeEmail
+                    ? [{ email: emailEqualsQuery(normalizedEmail) }, { username: identity }]
+                    : [{ username: identity }]
             });
             if (user) role = 'admin';
         }
 
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials or account not active' });
+        }
+
+        if (role === 'user' && user.authProvider === 'local' && !user.emailVerified) {
+            return res.status(403).json({ error: 'Email not verified. Please verify your email to login.' });
         }
 
         const isMatch = await user.comparePassword(password);
@@ -113,6 +172,7 @@ router.post('/google', async (req, res) => {
                 userType: 'customer',
                 authProvider: 'google',
                 authProviderId: payload.sub,
+                emailVerified: true,
             });
             await user.save();
         } else {
@@ -122,6 +182,7 @@ router.post('/google', async (req, res) => {
             if (needsUpdate) {
                 user.authProvider = 'google';
                 user.authProviderId = payload.sub;
+                user.emailVerified = true;
                 await user.save();
             }
         }
@@ -187,6 +248,7 @@ router.post('/facebook', async (req, res) => {
                 userType: 'customer',
                 authProvider: 'facebook',
                 authProviderId: me.id,
+                emailVerified: true,
             });
             await user.save();
         } else {
@@ -194,6 +256,7 @@ router.post('/facebook', async (req, res) => {
             if (needsUpdate) {
                 user.authProvider = 'facebook';
                 user.authProviderId = me.id;
+                user.emailVerified = true;
                 await user.save();
             }
         }
@@ -222,6 +285,16 @@ router.post('/signup', async (req, res) => {
         return res.status(400).json({ error: 'All fields required' });
     }
 
+    if (!isValidEmail(String(email))) {
+        return res.status(400).json({ error: 'Invalid email address' });
+    }
+
+    if (!isAllowedEmailDomain(String(email))) {
+        return res.status(400).json({ error: 'Email domain is not allowed' });
+    }
+
+    const normalizedEmail = normalizeEmail(email);
+
     if (password !== confirmPassword) {
         return res.status(400).json({ error: 'Passwords do not match' });
     }
@@ -232,8 +305,8 @@ router.post('/signup', async (req, res) => {
 
     try {
         // Check if email already exists in User or Admin
-        const existingUser = await User.findOne({ email });
-        const existingAdmin = await Admin.findOne({ email });
+        const existingUser = await User.findOne({ email: emailEqualsQuery(normalizedEmail) });
+        const existingAdmin = await Admin.findOne({ email: emailEqualsQuery(normalizedEmail) });
 
         if (existingUser || existingAdmin) {
             return res.status(400).json({ error: 'Email already registered' });
@@ -242,41 +315,62 @@ router.post('/signup', async (req, res) => {
         // Create user based on role
         if (role === 'admin') {
             // Create pending admin request with unique username
-            const baseUsername = email.split('@')[0];
+            const baseUsername = normalizedEmail.split('@')[0];
             const uniqueUsername = `${baseUsername}_${Date.now()}`;
 
             const admin = new Admin({
                 username: uniqueUsername,
-                email,
+                email: normalizedEmail,
                 password,
                 status: 'pending'
             });
             await admin.save();
             res.status(201).json({ message: 'Admin signup request submitted. Awaiting approval.', role: 'admin', needsApproval: true });
         } else {
-            // Create regular user
+            // Create regular user (unverified) and send OTP
+            const otp = generateNumericOtp(6);
+            const otpHash = hashOtp(otp);
+            const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
             const user = new User({
                 firstName,
                 lastName,
-                email,
+                email: normalizedEmail,
                 password,
                 role: 'user',
-                userType: userType || 'customer'
+                userType: userType || 'customer',
+                authProvider: 'local',
+                emailVerified: false,
+                emailOtpHash: otpHash,
+                emailOtpExpiresAt: expiresAt,
             });
             await user.save();
 
-            // Auto-login
-            const token = generateToken(user._id);
-            res.status(201).json({
-                message: 'Account created successfully',
-                token,
-                user: {
-                    _id: user._id,
-                    name: `${firstName} ${lastName}`,
-                    email: user.email,
-                    role: 'user',
-                    userType: user.userType
+            const devMode = isEmailOtpDevMode();
+            try {
+                await sendEmail({
+                    to: normalizedEmail,
+                    subject: 'FastSewa: Verify your email',
+                    text: `Your FastSewa verification code is: ${otp}\n\nThis code expires in 10 minutes.`,
+                    html: `<p>Your FastSewa verification code is:</p><h2 style="letter-spacing:2px">${otp}</h2><p>This code expires in 10 minutes.</p>`,
+                });
+            } catch (e) {
+                // If SMTP is misconfigured, don’t leave an unverified account stuck.
+                // In dev mode we allow it; otherwise return a clear error.
+                if (!devMode) {
+                    await User.deleteOne({ _id: user._id });
+                    return res.status(500).json({ error: e.message || 'Failed to send verification email' });
                 }
+            }
+
+            return res.status(201).json({
+                message: devMode
+                    ? 'Verification code generated (SMTP not configured in dev). Please verify to complete signup.'
+                    : 'Verification code sent to your email. Please verify to complete signup.',
+                needsEmailVerification: true,
+                email: normalizedEmail,
+                // Only returned in dev mode to simplify local testing.
+                otp: devMode ? otp : undefined,
             });
         }
     } catch (err) {
@@ -304,6 +398,109 @@ router.post('/signup', async (req, res) => {
     }
 });
 
+// Verify Email OTP
+router.post('/verify-email', async (req, res) => {
+    const { email, otp } = req.body || {};
+    if (!email || !otp) {
+        return res.status(400).json({ error: 'Email and OTP are required' });
+    }
+    if (!isValidEmail(String(email))) {
+        return res.status(400).json({ error: 'Invalid email address' });
+    }
+    const normalizedEmail = normalizeEmail(email);
+
+    try {
+        const user = await User.findOne({ email: emailEqualsQuery(normalizedEmail), isActive: true });
+        if (!user) {
+            return res.status(404).json({ error: 'Account not found. Please sign up as a User on this same site/link, then verify.' });
+        }
+
+        if (user.emailVerified) {
+            const token = generateToken(user._id);
+            return res.json({
+                message: 'Email already verified',
+                token,
+                user: buildUserResponse(user, 'user'),
+            });
+        }
+
+        if (!user.emailOtpHash || !user.emailOtpExpiresAt) {
+            return res.status(400).json({ error: 'No verification code found. Please request a new code.' });
+        }
+
+        if (user.emailOtpExpiresAt.getTime() < Date.now()) {
+            return res.status(400).json({ error: 'Verification code expired. Please request a new code.' });
+        }
+
+        const ok = constantTimeEqualHex(hashOtp(otp), user.emailOtpHash);
+        if (!ok) {
+            return res.status(400).json({ error: 'Invalid verification code' });
+        }
+
+        user.emailVerified = true;
+        user.emailOtpHash = undefined;
+        user.emailOtpExpiresAt = undefined;
+        await user.save();
+
+        const token = generateToken(user._id);
+        return res.json({
+            message: 'Email verified successfully',
+            token,
+            user: buildUserResponse(user, 'user'),
+        });
+    } catch (err) {
+        return res.status(500).json({ error: 'Server error' });
+    }
+});
+
+// Resend Email OTP
+router.post('/resend-email-otp', async (req, res) => {
+    const { email } = req.body || {};
+    if (!email) return res.status(400).json({ error: 'Email is required' });
+    if (!isValidEmail(String(email))) return res.status(400).json({ error: 'Invalid email address' });
+    if (!isAllowedEmailDomain(String(email))) return res.status(400).json({ error: 'Email domain is not allowed' });
+
+    const normalizedEmail = normalizeEmail(email);
+
+    try {
+        const user = await User.findOne({ email: emailEqualsQuery(normalizedEmail), isActive: true });
+        if (!user) return res.status(404).json({ error: 'Account not found' });
+        if (user.emailVerified) return res.json({ message: 'Email already verified' });
+        if (user.authProvider !== 'local') {
+            user.emailVerified = true;
+            await user.save();
+            return res.json({ message: 'Email verified' });
+        }
+
+        const otp = generateNumericOtp(6);
+        user.emailOtpHash = hashOtp(otp);
+        user.emailOtpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+        await user.save();
+
+        const devMode = isEmailOtpDevMode();
+        try {
+            await sendEmail({
+                to: normalizedEmail,
+                subject: 'FastSewa: Your verification code',
+                text: `Your FastSewa verification code is: ${otp}\n\nThis code expires in 10 minutes.`,
+                html: `<p>Your FastSewa verification code is:</p><h2 style="letter-spacing:2px">${otp}</h2><p>This code expires in 10 minutes.</p>`,
+            });
+        } catch (e) {
+            if (!devMode) {
+                return res.status(500).json({ error: e.message || 'Failed to send verification email' });
+            }
+        }
+
+        return res.json({
+            message: 'Verification code sent',
+            email: normalizedEmail,
+            otp: devMode ? otp : undefined,
+        });
+    } catch {
+        return res.status(500).json({ error: 'Server error' });
+    }
+});
+
 // Admin Signup Request
 router.post('/admin-signup', async (req, res) => {
     const { username, email, password, confirmPassword } = req.body;
@@ -320,15 +517,25 @@ router.post('/admin-signup', async (req, res) => {
         return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
 
+    if (!isValidEmail(String(email))) {
+        return res.status(400).json({ error: 'Invalid email address' });
+    }
+
+    if (!isAllowedEmailDomain(String(email))) {
+        return res.status(400).json({ error: 'Email domain is not allowed' });
+    }
+
+    const normalizedEmail = normalizeEmail(email);
+
     try {
         // Check if admin already exists (in Admin collection)
-        const existingAdmin = await Admin.findOne({ $or: [{ username }, { email }] });
+        const existingAdmin = await Admin.findOne({ $or: [{ username }, { email: emailEqualsQuery(normalizedEmail) }] });
         if (existingAdmin) {
             return res.status(400).json({ error: 'Username or email already exists' });
         }
 
         // Check if email exists in User collection
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ email: emailEqualsQuery(normalizedEmail) });
         if (existingUser) {
             return res.status(400).json({ error: 'Email already registered as a user' });
         }
@@ -336,7 +543,7 @@ router.post('/admin-signup', async (req, res) => {
         // Create pending admin request
         const admin = new Admin({
             username,
-            email,
+            email: normalizedEmail,
             password,
             status: 'pending'
         });
@@ -355,7 +562,7 @@ router.post('/admin-signup', async (req, res) => {
 });
 
 // Get pending admin requests (admin only)
-router.get('/requests', authMiddleware, async (req, res) => {
+router.get('/requests', requireAdmin, async (req, res) => {
     try {
         const requests = await Admin.find({ status: 'pending' }).select('-password');
         res.json(requests);
@@ -365,67 +572,7 @@ router.get('/requests', authMiddleware, async (req, res) => {
 });
 
 // Approve admin (admin only)
-router.post('/approve/:id', authMiddleware, async (req, res) => {
-    try {
-        const admin = await Admin.findByIdAndUpdate(
-            req.params.id,
-            { status: 'approved', approvedBy: req.admin.adminId, approvedAt: new Date() },
-            { new: true }
-        );
-        if (!admin) return res.status(404).json({ error: 'Not found' });
-        res.json({ message: 'Admin approved', admin });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to approve admin' });
-    }
-});
-
-// Reject admin (admin only)
-router.post('/reject/:id', authMiddleware, async (req, res) => {
-    try {
-        const admin = await Admin.findByIdAndUpdate(
-            req.params.id,
-            { status: 'rejected' },
-            { new: true }
-        );
-        if (!admin) return res.status(404).json({ error: 'Not found' });
-        res.json({ message: 'Admin rejected', admin });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to reject admin' });
-    }
-});
-
-// Get all approved admins (admin only)
-router.get('/admins', authMiddleware, async (req, res) => {
-    try {
-        const admins = await Admin.find({ status: 'approved' }).select('-password');
-        res.json(admins);
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch admins' });
-    }
-});
-
-// Get all users (admin only)
-router.get('/users', authMiddleware, async (req, res) => {
-    try {
-        const users = await User.find({ isActive: true }).select('-password').sort({ createdAt: -1 });
-        res.json(users);
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch users' });
-    }
-});
-
-// Get pending admin requests (admin only)
-router.get('/requests', authMiddleware, async (req, res) => {
-    try {
-        const requests = await Admin.find({ status: 'pending' }).select('-password');
-        res.json(requests);
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to fetch requests' });
-    }
-});
-
-// Approve admin (admin only)
-router.post('/approve/:id', authMiddleware, async (req, res) => {
+router.post('/approve/:id', requireAdmin, async (req, res) => {
     try {
         const admin = await Admin.findByIdAndUpdate(
             req.params.id,
@@ -440,7 +587,67 @@ router.post('/approve/:id', authMiddleware, async (req, res) => {
 });
 
 // Reject admin (admin only)
-router.post('/reject/:id', authMiddleware, async (req, res) => {
+router.post('/reject/:id', requireAdmin, async (req, res) => {
+    try {
+        const admin = await Admin.findByIdAndUpdate(
+            req.params.id,
+            { status: 'rejected' },
+            { new: true }
+        );
+        if (!admin) return res.status(404).json({ error: 'Not found' });
+        res.json({ message: 'Admin rejected', admin });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to reject admin' });
+    }
+});
+
+// Get all approved admins (admin only)
+router.get('/admins', requireAdmin, async (req, res) => {
+    try {
+        const admins = await Admin.find({ status: 'approved' }).select('-password');
+        res.json(admins);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch admins' });
+    }
+});
+
+// Get all users (admin only)
+router.get('/users', requireAdmin, async (req, res) => {
+    try {
+        const users = await User.find({}).select('-password').sort({ createdAt: -1 });
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch users' });
+    }
+});
+
+// Get pending admin requests (admin only)
+router.get('/requests', requireAdmin, async (req, res) => {
+    try {
+        const requests = await Admin.find({ status: 'pending' }).select('-password');
+        res.json(requests);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to fetch requests' });
+    }
+});
+
+// Approve admin (admin only)
+router.post('/approve/:id', requireAdmin, async (req, res) => {
+    try {
+        const admin = await Admin.findByIdAndUpdate(
+            req.params.id,
+            { status: 'approved', approvedBy: req.admin?.adminId, approvedAt: new Date() },
+            { new: true }
+        );
+        if (!admin) return res.status(404).json({ error: 'Not found' });
+        res.json({ message: 'Admin approved', admin });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to approve admin' });
+    }
+});
+
+// Reject admin (admin only)
+router.post('/reject/:id', requireAdmin, async (req, res) => {
     try {
         const admin = await Admin.findByIdAndUpdate(
             req.params.id,
@@ -462,14 +669,24 @@ router.post('/forgot-password', async (req, res) => {
         return res.status(400).json({ error: 'Email is required' });
     }
 
+    if (!isValidEmail(String(email))) {
+        return res.status(400).json({ error: 'Invalid email address' });
+    }
+
+    if (!isAllowedEmailDomain(String(email))) {
+        return res.status(400).json({ error: 'Email domain is not allowed' });
+    }
+
+    const normalizedEmail = normalizeEmail(email);
+
     try {
         // Check in User collection first
-        let user = await User.findOne({ email });
+        let user = await User.findOne({ email: emailEqualsQuery(normalizedEmail) });
         let isAdmin = false;
 
         // If not found in User, check Admin collection
         if (!user) {
-            user = await Admin.findOne({ email });
+            user = await Admin.findOne({ email: emailEqualsQuery(normalizedEmail) });
             isAdmin = true;
         }
 

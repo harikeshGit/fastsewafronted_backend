@@ -130,12 +130,20 @@ async function loadVendors() {
             const cats = Array.isArray(v.serviceCategories) ? v.serviceCategories.join(', ') : '';
             const rejection = v.rejectionReason ? ` — ${v.rejectionReason}` : '';
 
-            const actionButtons = v.status === 'APPROVED'
+            const approvalButtons = v.status === 'APPROVED'
                 ? `<span class="status-badge status-approved">Approved</span>`
                 : `
                     <button class="btn-action approve" onclick="approveVendor('${v._id}')">Approve</button>
                     <button class="btn-action reject" onclick="rejectVendor('${v._id}')">Reject</button>
                   `;
+
+            const blockButton = v.isActive
+                ? `<button class="btn-action reject" onclick="setVendorActive('${v._id}', false)">Block</button>`
+                : `<button class="btn-action approve" onclick="setVendorActive('${v._id}', true)">Unblock</button>`;
+
+            const deleteButton = `<button class="btn-action reject" onclick="deleteVendor('${v._id}')">Delete</button>`;
+
+            const actionButtons = `${approvalButtons} ${blockButton} ${deleteButton}`;
 
             tableHTML += `
                 <tr>
@@ -159,6 +167,47 @@ async function loadVendors() {
                 <p>${err.message}</p>
             </div>
         `;
+    }
+}
+
+async function setVendorActive(id, isActive) {
+    const action = isActive ? 'unblock' : 'block';
+    if (!confirm(`Are you sure you want to ${action} this vendor?`)) return;
+
+    try {
+        const response = await fetch(`${API_URL}/admin/vendors/${id}/active`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ isActive })
+        });
+
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error || 'Update failed');
+        await loadVendors();
+        alert(`✅ Vendor ${isActive ? 'unblocked' : 'blocked'}`);
+    } catch (err) {
+        alert(`❌ ${err.message}`);
+    }
+}
+
+async function deleteVendor(id) {
+    if (!confirm('Delete this vendor permanently? This cannot be undone.')) return;
+
+    try {
+        const response = await fetch(`${API_URL}/admin/vendors/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error || 'Delete failed');
+        await loadVendors();
+        alert('✅ Vendor deleted');
+    } catch (err) {
+        alert(`❌ ${err.message}`);
     }
 }
 
@@ -266,13 +315,14 @@ async function loadBookings() {
 // Load Users
 async function loadUsers() {
     try {
-        const response = await fetch(`${API_URL}/auth/users`, {
+        const response = await fetch(`${API_URL}/admin/users`, {
             headers: { 'Authorization': `Bearer ${authToken}` }
         });
 
         if (!response.ok) throw new Error('Failed to load users');
 
-        const users = await response.json();
+        const payload = await response.json();
+        const users = Array.isArray(payload) ? payload : (payload.users || []);
         document.getElementById('totalUsers').textContent = users.length;
 
         if (users.length === 0) {
@@ -296,6 +346,7 @@ async function loadUsers() {
                             <th>User Type</th>
                             <th>Status</th>
                             <th>Joined</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -304,6 +355,11 @@ async function loadUsers() {
         users.forEach(user => {
             const statusClass = user.isActive ? 'status-approved' : 'status-rejected';
             const statusText = user.isActive ? 'Active' : 'Inactive';
+            const blockButton = user.isActive
+                ? `<button class="btn-action reject" onclick="setUserActive('${user._id}', false)">Block</button>`
+                : `<button class="btn-action approve" onclick="setUserActive('${user._id}', true)">Unblock</button>`;
+            const deleteButton = `<button class="btn-action reject" onclick="deleteUser('${user._id}')">Delete</button>`;
+
             tableHTML += `
                 <tr>
                     <td>${user.firstName} ${user.lastName}</td>
@@ -311,6 +367,7 @@ async function loadUsers() {
                     <td>${user.userType || 'N/A'}</td>
                     <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                     <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+                    <td>${blockButton} ${deleteButton}</td>
                 </tr>
             `;
         });
@@ -326,6 +383,47 @@ async function loadUsers() {
                 <p>${err.message}</p>
             </div>
         `;
+    }
+}
+
+async function setUserActive(id, isActive) {
+    const action = isActive ? 'unblock' : 'block';
+    if (!confirm(`Are you sure you want to ${action} this user?`)) return;
+
+    try {
+        const response = await fetch(`${API_URL}/admin/users/${id}/active`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({ isActive })
+        });
+
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error || 'Update failed');
+        await loadUsers();
+        alert(`✅ User ${isActive ? 'unblocked' : 'blocked'}`);
+    } catch (err) {
+        alert(`❌ ${err.message}`);
+    }
+}
+
+async function deleteUser(id) {
+    if (!confirm('Delete this user permanently? This cannot be undone.')) return;
+
+    try {
+        const response = await fetch(`${API_URL}/admin/users/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.error || 'Delete failed');
+        await loadUsers();
+        alert('✅ User deleted');
+    } catch (err) {
+        alert(`❌ ${err.message}`);
     }
 }
 

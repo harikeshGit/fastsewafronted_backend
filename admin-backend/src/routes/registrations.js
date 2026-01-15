@@ -1,11 +1,11 @@
 const express = require('express');
 const Registration = require('../models/Registration');
-const { authMiddleware } = require('../middleware/auth');
+const { requireAdmin } = require('../middleware/requireAdmin');
 
 const router = express.Router();
 
 // Get all registrations (admin only)
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', requireAdmin, async (req, res) => {
     try {
         const registrations = await Registration.find().sort({ createdAt: -1 });
         res.json(registrations);
@@ -32,7 +32,7 @@ router.post('/', async (req, res) => {
 });
 
 // Delete registration (admin only)
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', requireAdmin, async (req, res) => {
     try {
         const registration = await Registration.findByIdAndDelete(req.params.id);
         if (!registration) return res.status(404).json({ error: 'Not found' });

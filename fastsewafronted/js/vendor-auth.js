@@ -63,6 +63,15 @@ function showLoginStatus(message, type) {
     }, type === 'success' ? 2000 : 5000);
 }
 
+function isValidEmail(email) {
+    const e = String(email || '').trim();
+    if (!e) return false;
+    if (e.length > 254) return false;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return false;
+    if (e.includes('..')) return false;
+    return true;
+}
+
 async function apiRequest(path, method, body) {
     const res = await fetch(`${API_BASE}${path}`, {
         method,
@@ -118,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (!serviceCategory) return showStatus('Please select a service category', 'error');
                     if (!businessName || !ownerName || !email || !phone || !city) return showStatus('All basic fields are required', 'error');
+                    if (!isValidEmail(email)) return showStatus('Please enter a valid email address', 'error');
                     if (!aadhaarNumber || String(aadhaarNumber).length < 10) return showStatus('Please enter a valid Aadhaar number', 'error');
                     if (!panNumber || String(panNumber).length < 10) return showStatus('Please enter a valid PAN number', 'error');
                     if (!terms) return showStatus('Please accept Terms & Conditions', 'error');
@@ -161,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (!terms) return showStatus('Please accept the terms to continue.', 'error');
                     if (!name || !email || !password) return showStatus('Name, email, and password are required.', 'error');
+                    if (!isValidEmail(email)) return showStatus('Please enter a valid email address.', 'error');
                     if (password.length < 6) return showStatus('Password must be at least 6 characters.', 'error');
                     if (password !== confirmPassword) return showStatus('Passwords do not match.', 'error');
 
@@ -196,6 +207,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!email || !password) {
                 showLoginStatus('Email and password are required', 'error');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                showLoginStatus('Please enter a valid email address', 'error');
                 return;
             }
 

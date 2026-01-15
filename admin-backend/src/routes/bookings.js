@@ -1,11 +1,11 @@
 const express = require('express');
 const Booking = require('../models/Booking');
-const { authMiddleware } = require('../middleware/auth');
+const { requireAdmin } = require('../middleware/requireAdmin');
 
 const router = express.Router();
 
 // Get all bookings (admin only)
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', requireAdmin, async (req, res) => {
     try {
         const bookings = await Booking.find().sort({ createdAt: -1 });
         res.json(bookings);
@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
 });
 
 // Update booking status (admin only)
-router.put('/:id', authMiddleware, async (req, res) => {
+router.put('/:id', requireAdmin, async (req, res) => {
     try {
         const { status } = req.body;
         const booking = await Booking.findByIdAndUpdate(req.params.id, { status }, { new: true });
@@ -41,7 +41,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
 });
 
 // Delete booking (admin only)
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', requireAdmin, async (req, res) => {
     try {
         const booking = await Booking.findByIdAndDelete(req.params.id);
         if (!booking) return res.status(404).json({ error: 'Not found' });

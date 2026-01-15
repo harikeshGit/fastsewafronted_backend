@@ -75,6 +75,15 @@ function getApiBase() {
     return `${origin}/api`;
 }
 
+function isValidEmail(email) {
+    const e = String(email || '').trim();
+    if (!e) return false;
+    if (e.length > 254) return false;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return false;
+    if (e.includes('..')) return false;
+    return true;
+}
+
 function persistAuthResult(data) {
     const actualRole = String(data?.user?.role || 'user').toLowerCase();
 
@@ -262,6 +271,11 @@ async function handleLoginSubmit(e) {
     // Validation
     if (!email || !password) {
         alert('❌ Please fill in all fields');
+        return;
+    }
+
+    if (!isValidEmail(email)) {
+        alert('❌ Please enter a valid email address');
         return;
     }
 

@@ -3,7 +3,14 @@ const bcrypt = require('bcrypt');
 
 const AdminSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true,
+        match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email address'],
+    },
     password: { type: String, required: true },
     status: { type: String, default: 'pending', enum: ['pending', 'approved', 'rejected'] },
     requestedBy: { type: String }, // Email of user who requested signup

@@ -12,6 +12,10 @@ param(
 
     [Parameter(Mandatory = $false)]
     [switch]$SmokeTest
+
+    ,
+    [Parameter(Mandatory = $false)]
+    [switch]$Detach
 )
 
 $ErrorActionPreference = 'Stop'
@@ -80,7 +84,20 @@ function Get-TunnelUrl {
         return $ExplicitUrl
     }
 
-    return "http://localhost:$DefaultPort"
+    # Use IPv4 loopback by default to avoid 'localhost' resolving to IPv6 ::1 on Windows,
+    # which can break when the origin service only listens on 127.0.0.1.
+    return "http://127.0.0.1:$DefaultPort"
+}
+
+function Extract-TryCloudflareUrl {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Text
+    )
+
+    $m = [regex]::Match($Text, 'https://[a-zA-Z0-9-]+\.trycloudflare\.com')
+    if ($m.Success) { return $m.Value }
+    return $null
 }
 
 $cloudflaredExe = Resolve-CloudflaredPath -PreferredPath $CloudflaredPath
@@ -90,6 +107,37 @@ Write-Host "Using cloudflared: $cloudflaredExe"
 Write-Host "Tunneling: $tunnelUrl"
 
 $args = @('tunnel', '--url', $tunnelUrl, '--no-autoupdate')
+
+if ($Detach) {
+    $stdout = Join-Path $env:TEMP "cloudflared-$PID.stdout.log"
+    $stderr = Join-Path $env:TEMP "cloudflared-$PID.stderr.log"
+
+    if (Test-Path $stdout) { Remove-Item $stdout -Force }
+    if (Test-Path $stderr) { Remove-Item $stderr -Force }
+
+    $proc = Start-Process -FilePath $cloudflaredExe -ArgumentList $args -PassThru -NoNewWindow -RedirectStandardOutput $stdout -RedirectStandardError $stderr
+
+    $publicUrl = $null
+    $deadline = (Get-Date).AddSeconds(15)
+    while ((Get-Date) -lt $deadline -and -not $publicUrl) {
+        Start-Sleep -Milliseconds 500
+        $output = ''
+        if (Test-Path $stdout) { $output += (Get-Content -Path $stdout -Raw -ErrorAction SilentlyContinue) }
+        if (Test-Path $stderr) { $output += ("`n" + (Get-Content -Path $stderr -Raw -ErrorAction SilentlyContinue)) }
+        $publicUrl = Extract-TryCloudflareUrl -Text $output
+    }
+
+    if ($publicUrl) {
+        Write-Host "Public URL: $publicUrl"
+    }
+    else {
+        Write-Warning "Tunnel started but URL not detected in first 15s. Check logs: $stdout and $stderr"
+    }
+
+    Write-Host "Tunnel PID: $($proc.Id)"
+    Write-Host "Logs: $stdout , $stderr"
+    exit 0
+}
 
 if ($SmokeTest) {
     $stdout = Join-Path $env:TEMP "cloudflared-$PID.stdout.log"
@@ -105,7 +153,7 @@ if ($SmokeTest) {
     if (Test-Path $stdout) { $output += (Get-Content -Path $stdout -Raw -ErrorAction SilentlyContinue) }
     if (Test-Path $stderr) { $output += ("`n" + (Get-Content -Path $stderr -Raw -ErrorAction SilentlyContinue)) }
 
-    $publicUrl = ($output -split "`r?`n" | Where-Object { $_ -match 'https://.*trycloudflare\.com' } | Select-Object -First 1)
+    $publicUrl = Extract-TryCloudflareUrl -Text $output
 
     if ($publicUrl) {
         Write-Host "Public URL detected: $publicUrl"

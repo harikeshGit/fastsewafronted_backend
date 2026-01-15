@@ -17,7 +17,14 @@ const VendorSchema = new mongoose.Schema(
         name: { type: String, required: true, trim: true },
         businessName: { type: String, trim: true },
         ownerName: { type: String, trim: true },
-        email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            lowercase: true,
+            trim: true,
+            match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email address'],
+        },
         phone: { type: String, trim: true },
         password: { type: String, required: true },
 

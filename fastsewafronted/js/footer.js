@@ -57,6 +57,63 @@
     }
 })();
 
+// If an admin deletes/blocks a user, the browser may still have an old token/user in localStorage.
+// Validate the token against the server and auto-logout if it is no longer valid.
+(function () {
+    if (window.__fastsewaSessionValidated) return;
+    window.__fastsewaSessionValidated = true;
+
+    const token = localStorage.getItem('fastsewaToken') || localStorage.getItem('fastsewa_token');
+    if (!token) return;
+
+    const getApiBase = () => {
+        const custom = window.localStorage.getItem('apiUrl');
+        if (custom) return `${custom.replace(/\/+$/, '')}/api`;
+
+        const hostname = (window.location.hostname || '').toLowerCase();
+        const isLocalHost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0' || hostname === '::1' || hostname === '::';
+        if (isLocalHost) return 'http://localhost:4000/api';
+
+        const origin = window.location.origin;
+        if (!origin || origin === 'null') return 'http://localhost:4000/api';
+        return `${origin}/api`;
+    };
+
+    const clearAuth = () => {
+        localStorage.removeItem('fastsewaToken');
+        localStorage.removeItem('fastsewa_token');
+        localStorage.removeItem('fastsewaUser');
+        localStorage.removeItem('fastsewa_current_user');
+    };
+
+    // Run after DOM load so we can update nav UI if needed.
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            const apiBase = getApiBase();
+            const r = await fetch(`${apiBase}/auth/me`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (r.status === 401 || r.status === 403) {
+                clearAuth();
+                try { fastsewaUpdateNavbarAuthUI(); } catch { /* ignore */ }
+                return;
+            }
+
+            // Refresh stored user with the server's current value when available.
+            const data = await r.json().catch(() => null);
+            if (data && data.success && data.user) {
+                const normalized = { ...data.user, isLoggedIn: true };
+                localStorage.setItem('fastsewaUser', JSON.stringify(normalized));
+                localStorage.setItem('fastsewa_current_user', JSON.stringify(normalized));
+                try { fastsewaUpdateNavbarAuthUI(); } catch { /* ignore */ }
+            }
+        } catch {
+            // If offline or backend is unreachable, keep the session as-is.
+        }
+    });
+})();
+
 function fastsewaGetStoredAuth() {
     try {
         const token = localStorage.getItem('fastsewaToken') || localStorage.getItem('fastsewa_token');

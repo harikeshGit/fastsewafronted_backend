@@ -4,12 +4,12 @@ const PDFDocument = require('pdfkit');
 const Booking = require('../models/Booking');
 const Registration = require('../models/Registration');
 const User = require('../models/User');
-const { authMiddleware } = require('../middleware/auth');
+const { requireAdmin } = require('../middleware/requireAdmin');
 
 const router = express.Router();
 
 // Export bookings to Excel
-router.get('/bookings/excel', authMiddleware, async (req, res) => {
+router.get('/bookings/excel', requireAdmin, async (req, res) => {
     try {
         const bookings = await Booking.find().sort({ createdAt: -1 });
         const workbook = new ExcelJS.Workbook();
@@ -50,7 +50,7 @@ router.get('/bookings/excel', authMiddleware, async (req, res) => {
 });
 
 // Export registrations to Excel
-router.get('/registrations/excel', authMiddleware, async (req, res) => {
+router.get('/registrations/excel', requireAdmin, async (req, res) => {
     try {
         const registrations = await Registration.find().sort({ createdAt: -1 });
         const workbook = new ExcelJS.Workbook();
@@ -89,7 +89,7 @@ router.get('/registrations/excel', authMiddleware, async (req, res) => {
 });
 
 // Export bookings to PDF
-router.get('/bookings/pdf', authMiddleware, async (req, res) => {
+router.get('/bookings/pdf', requireAdmin, async (req, res) => {
     try {
         const bookings = await Booking.find().sort({ createdAt: -1 });
         const doc = new PDFDocument();
@@ -121,7 +121,7 @@ router.get('/bookings/pdf', authMiddleware, async (req, res) => {
 });
 
 // Export registrations to PDF
-router.get('/registrations/pdf', authMiddleware, async (req, res) => {
+router.get('/registrations/pdf', requireAdmin, async (req, res) => {
     try {
         const registrations = await Registration.find().sort({ createdAt: -1 });
         const doc = new PDFDocument();
@@ -152,7 +152,7 @@ router.get('/registrations/pdf', authMiddleware, async (req, res) => {
 });
 
 // Export users to Excel
-router.get('/users/excel', authMiddleware, async (req, res) => {
+router.get('/users/excel', requireAdmin, async (req, res) => {
     try {
         const users = await User.find().sort({ createdAt: -1 });
         const workbook = new ExcelJS.Workbook();
@@ -193,7 +193,7 @@ router.get('/users/excel', authMiddleware, async (req, res) => {
 });
 
 // Export users to PDF
-router.get('/users/pdf', authMiddleware, async (req, res) => {
+router.get('/users/pdf', requireAdmin, async (req, res) => {
     try {
         const users = await User.find().sort({ createdAt: -1 });
         const doc = new PDFDocument();

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastSewa - Verify Email</title>
+    <meta http-equiv="refresh" content="1; url=signup.html">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- THEME VARIABLES (Same as Login/Signup) --- */
+        :root {
+            --primary: #ff5722;
+            --primary-hover: #e64a19;
+            --dark-bg: #0f172a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* --- ANIMATED BACKGROUND (Blobs) --- */
+        .blob {
+            position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; z-index: -1;
+            animation: float 10s infinite alternate;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #ff5722; }
+        .blob-2 { bottom: -10%; right: -10%; width: 400px; height: 400px; background: #2196f3; animation-delay: -5s; }
+        @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(30px, 50px); } }
+
+        /* --- GLASS CARD --- */
+        .verify-wrapper {
+            width: 100%;
+            max-width: 460px;
+            padding: 20px;
+            z-index: 10;
+        }
+
+        .verify-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.8s ease forwards;
+            opacity: 0; transform: translateY(30px);
+        }
+
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        /* --- HEADER & LOGO --- */
+        .auth-header { text-align: center; margin-bottom: 22px; }
+        .logo-img { height: 60px; margin-bottom: 12px; }
+        .auth-header h2 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+        .auth-header p { color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+
+        /* --- FORM ELEMENTS --- */
+        .form-group { margin-bottom: 18px; position: relative; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 13px; color: var(--text-muted); font-weight: 500; }
+
+        .input-group { position: relative; }
+        .input-group i {
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); font-size: 16px; transition: 0.3s;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 4px rgba(255, 87, 34, 0.1);
+        }
+        .form-control:focus + i { color: var(--primary); }
+
+        /* --- BUTTONS --- */
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(255, 87, 34, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(255, 87, 34, 0.4);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+            margin-top: 12px;
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+        .auth-footer {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .auth-footer a { color: var(--primary); text-decoration: none; font-weight: 600; }
+        .auth-footer a:hover { text-decoration: underline; }
+
+        /* --- HOME BUTTON --- */
+        .back-home {
+            position: absolute; top: 20px; left: 20px;
+            color: white; text-decoration: none;
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 30px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+        .back-home:hover { background: var(--primary); }
+
+        @media (max-width: 480px) {
+            .verify-card { padding: 30px 20px; }
+            .back-home span { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <a href="index.html" class="back-home">
+        <i class="fas fa-arrow-left"></i> <span>Home</span>
+    </a>
+
+    <div class="verify-wrapper">
+        <div class="verify-card">
+            <div class="auth-header">
+                <img src="images/logo1.png" alt="FastSewa" class="logo-img">
+                <h2>Verification moved</h2>
+                <p>Email verification now happens directly on the Signup page. Redirecting…</p>
+            </div>
+
+            <div class="auth-footer">
+                If you are not redirected, <a href="signup.html">open Signup</a>.
+            </div>
+
+            <div class="auth-footer">
+                Already verified? <a href="login.html">Login</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,6 +1,7 @@
 const express = require('express');
 const Vendor = require('../models/Vendor');
 const { generateVendorToken } = require('../middleware/authVendor');
+const { normalizeEmail, isValidEmail, emailEqualsQuery, isAllowedEmailDomain } = require('../utils/email');
 
 const router = express.Router();
 
@@ -49,6 +50,16 @@ router.post('/register', async (req, res) => {
         return res.status(400).json({ error: 'Missing required fields' });
     }
 
+    if (!isValidEmail(String(email))) {
+        return res.status(400).json({ error: 'Invalid email address' });
+    }
+
+    if (!isAllowedEmailDomain(String(email))) {
+        return res.status(400).json({ error: 'Email domain is not allowed' });
+    }
+
+    const normalizedEmail = normalizeEmail(email);
+
     if (password.length < 6) {
         return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
@@ -66,7 +77,7 @@ router.post('/register', async (req, res) => {
     }
 
     try {
-        const existing = await Vendor.findOne({ email: String(email).toLowerCase().trim() });
+        const existing = await Vendor.findOne({ email: emailEqualsQuery(normalizedEmail) });
         if (existing) {
             return res.status(400).json({ error: 'Email already registered' });
         }
@@ -75,7 +86,7 @@ router.post('/register', async (req, res) => {
             name: resolvedName,
             businessName,
             ownerName,
-            email,
+            email: normalizedEmail,
             phone,
             password,
             aadhaar: String(resolvedAadhaar).replace(/\s+/g, ''),
@@ -118,8 +129,14 @@ router.post('/login', async (req, res) => {
         return res.status(400).json({ error: 'Email and password required' });
     }
 
+    if (!isValidEmail(String(email))) {
+        return res.status(400).json({ error: 'Invalid email address' });
+    }
+
+    const normalizedEmail = normalizeEmail(email);
+
     try {
-        const vendor = await Vendor.findOne({ email: String(email).toLowerCase().trim(), isActive: true });
+        const vendor = await Vendor.findOne({ email: emailEqualsQuery(normalizedEmail), isActive: true });
         if (!vendor) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }

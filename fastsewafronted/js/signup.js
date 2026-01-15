@@ -5,12 +5,202 @@ document.addEventListener('DOMContentLoaded', function () {
         signupForm.addEventListener('submit', handleSignupSubmit);
     }
 
+    const verifyOtpBtn = document.getElementById('verifyOtpBtn');
+    if (verifyOtpBtn) {
+        verifyOtpBtn.addEventListener('click', handleVerifyOtp);
+    }
+
+    const resendOtpBtn = document.getElementById('resendOtpBtn');
+    if (resendOtpBtn) {
+        resendOtpBtn.addEventListener('click', handleResendOtp);
+    }
+
+    const changeEmailBtn = document.getElementById('changeEmailBtn');
+    if (changeEmailBtn) {
+        changeEmailBtn.addEventListener('click', resetOtpFlow);
+    }
+
     // Handle role change
     const userRole = document.getElementById('userRole');
     if (userRole) {
         userRole.addEventListener('change', toggleUserType);
     }
 });
+
+let pendingOtpEmail = null;
+
+function setOtpMessage(message, visible = true) {
+    const el = document.getElementById('otpMessage');
+    if (!el) return;
+    if (!visible) {
+        el.style.display = 'none';
+        el.textContent = '';
+        return;
+    }
+    el.textContent = String(message || '');
+    el.style.display = 'block';
+}
+
+function setSignupLoading(isLoading) {
+    const btn = document.getElementById('signupBtn');
+    const btnText = document.getElementById('btnText');
+    const spinner = document.getElementById('btnSpinner');
+
+    if (!btn || !btnText || !spinner) return;
+
+    if (isLoading) {
+        btnText.style.display = 'none';
+        spinner.style.display = 'block';
+        btn.style.opacity = '0.7';
+        btn.disabled = true;
+    } else {
+        btnText.style.display = 'block';
+        spinner.style.display = 'none';
+        btn.style.opacity = '1';
+        btn.disabled = false;
+    }
+}
+
+function setSignupInputsDisabled(disabled) {
+    const ids = [
+        'fname', 'lname', 'email', 'userRole', 'userType',
+        'vendorServiceCategory', 'vendorBusinessName', 'vendorOwnerName', 'vendorPhone', 'vendorCity',
+        'vendorAadhaar', 'vendorPan', 'vendorGst', 'vendorExperience', 'vendorTurnoverBelowLimit',
+        'pass', 'cpass'
+    ];
+
+    ids.forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.disabled = Boolean(disabled);
+    });
+}
+
+function showOtpSection(email) {
+    pendingOtpEmail = String(email || '').trim();
+    localStorage.setItem('pendingVerifyEmail', pendingOtpEmail);
+
+    const otpSection = document.getElementById('otpSection');
+    const emailPreview = document.getElementById('otpEmailPreview');
+    const emailOtp = document.getElementById('emailOtp');
+    const signupBtn = document.getElementById('signupBtn');
+
+    if (emailPreview) emailPreview.textContent = pendingOtpEmail;
+    if (otpSection) otpSection.style.display = 'block';
+    if (signupBtn) signupBtn.style.display = 'none';
+    if (emailOtp) {
+        emailOtp.value = '';
+        emailOtp.focus();
+    }
+
+    setOtpMessage('', false);
+    setSignupInputsDisabled(true);
+}
+
+function resetOtpFlow() {
+    pendingOtpEmail = null;
+    localStorage.removeItem('pendingVerifyEmail');
+
+    const otpSection = document.getElementById('otpSection');
+    const signupBtn = document.getElementById('signupBtn');
+    if (otpSection) otpSection.style.display = 'none';
+    if (signupBtn) signupBtn.style.display = 'block';
+
+    setOtpMessage('', false);
+    setSignupInputsDisabled(false);
+}
+
+function getApiBase() {
+    const custom = window.localStorage.getItem('apiUrl');
+    if (custom) return `${custom.replace(/\/+$/, '')}/api`;
+
+    const hostname = (window.location.hostname || '').toLowerCase();
+    const isLocalHost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0' || hostname === '::1' || hostname === '::';
+    if (isLocalHost) return 'http://localhost:4000/api';
+
+    const origin = window.location.origin;
+    if (!origin || origin === 'null') return 'http://localhost:4000/api';
+    return `${origin}/api`;
+}
+
+async function handleVerifyOtp() {
+    const API_BASE = getApiBase();
+    const otp = String(document.getElementById('emailOtp')?.value || '').trim();
+    const email = (pendingOtpEmail || localStorage.getItem('pendingVerifyEmail') || '').trim();
+
+    if (!email) {
+        setOtpMessage('Missing email. Please change email and try again.');
+        return;
+    }
+
+    if (!otp || otp.length < 4) {
+        setOtpMessage('Please enter the verification code sent to your email.');
+        return;
+    }
+
+    try {
+        setOtpMessage('Verifying...', true);
+
+        const response = await fetch(`${API_BASE}/auth/verify-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, otp })
+        });
+
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || 'Verification failed');
+
+        // Store auth and login immediately
+        const normalizedUser = { ...(data.user || {}), isLoggedIn: true };
+        if (!normalizedUser.name) {
+            normalizedUser.name =
+                normalizedUser.fullName ||
+                `${normalizedUser.firstName || ''} ${normalizedUser.lastName || ''}`.trim() ||
+                normalizedUser.email ||
+                'User';
+        }
+
+        localStorage.setItem('fastsewaUser', JSON.stringify(normalizedUser));
+        localStorage.setItem('fastsewa_current_user', JSON.stringify(normalizedUser));
+        if (data.token) {
+            localStorage.setItem('fastsewaToken', data.token);
+            localStorage.setItem('fastsewa_token', data.token);
+        }
+
+        localStorage.removeItem('pendingVerifyEmail');
+        setOtpMessage('✅ Email verified. Redirecting...', true);
+        window.location.href = 'index.html';
+    } catch (err) {
+        setOtpMessage('❌ ' + (err.message || 'Verification failed'));
+    }
+}
+
+async function handleResendOtp() {
+    const API_BASE = getApiBase();
+    const email = (pendingOtpEmail || localStorage.getItem('pendingVerifyEmail') || '').trim();
+
+    if (!email) {
+        setOtpMessage('Missing email. Please change email and try again.');
+        return;
+    }
+
+    try {
+        setOtpMessage('Sending a new code...', true);
+        const response = await fetch(`${API_BASE}/auth/resend-email-otp`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || 'Resend failed');
+
+        const extra = data.otp ? ` (Dev OTP: ${data.otp})` : '';
+        setOtpMessage((data.message || 'Verification code sent') + extra, true);
+    } catch (err) {
+        setOtpMessage('❌ ' + (err.message || 'Resend failed'));
+    }
+}
 
 function toggleUserType() {
     const role = document.getElementById('userRole').value;
@@ -55,12 +245,24 @@ function toggleUserType() {
     }
 }
 
+function isValidEmail(email) {
+    const e = String(email || '').trim();
+    if (!e) return false;
+    if (e.length > 254) return false;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return false;
+    if (e.includes('..')) return false;
+    return true;
+}
+
 async function handleSignupSubmit(e) {
     e.preventDefault();
 
-    const btn = document.getElementById('signupBtn');
-    const btnText = document.getElementById('btnText');
-    const spinner = document.getElementById('btnSpinner');
+    // If OTP step is visible, treat submit as verify
+    const otpSection = document.getElementById('otpSection');
+    if (otpSection && otpSection.style.display !== 'none') {
+        await handleVerifyOtp();
+        return;
+    }
 
     const fname = document.getElementById('fname').value.trim();
     const lname = document.getElementById('lname').value.trim();
@@ -70,18 +272,7 @@ async function handleSignupSubmit(e) {
     const role = document.getElementById('userRole').value;
     const userType = document.getElementById('userType').value;
 
-    const API_BASE = (() => {
-        const custom = window.localStorage.getItem('apiUrl');
-        if (custom) return `${custom.replace(/\/+$/, '')}/api`;
-
-        const hostname = (window.location.hostname || '').toLowerCase();
-        const isLocalHost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0' || hostname === '::1' || hostname === '::';
-        if (isLocalHost) return 'http://localhost:4000/api';
-
-        const origin = window.location.origin;
-        if (!origin || origin === 'null') return 'http://localhost:4000/api';
-        return `${origin}/api`;
-    })();
+    const API_BASE = getApiBase();
 
     // Vendor signup (no redirect)
     if (role === 'vendor') {
@@ -96,6 +287,11 @@ async function handleSignupSubmit(e) {
         const experienceYears = document.getElementById('vendorExperience')?.value;
         const turnoverBelowLimit = Boolean(document.getElementById('vendorTurnoverBelowLimit')?.checked);
 
+        if (!isValidEmail(email)) {
+            alert('❌ Please enter a valid email address');
+            return;
+        }
+
         if (!serviceCategory || !businessName || !ownerName || !phone || !aadhaarNumber || !panNumber) {
             alert('❌ Please fill all required vendor fields');
             return;
@@ -107,10 +303,7 @@ async function handleSignupSubmit(e) {
         }
 
         // Start Loading
-        btnText.style.display = 'none';
-        spinner.style.display = 'block';
-        btn.style.opacity = '0.7';
-        btn.disabled = true;
+        setSignupLoading(true);
 
         try {
             const response = await fetch(`${API_BASE}/vendor/auth/register`, {
@@ -140,10 +333,7 @@ async function handleSignupSubmit(e) {
             window.location.href = 'login.html';
         } catch (err) {
             alert('❌ ' + (err.message || 'Vendor signup failed'));
-            btnText.style.display = 'block';
-            spinner.style.display = 'none';
-            btn.style.opacity = '1';
-            btn.disabled = false;
+            setSignupLoading(false);
         }
         return;
     }
@@ -151,6 +341,11 @@ async function handleSignupSubmit(e) {
     // Validation
     if (!fname || !lname || !email || !pass || !cpass) {
         alert('❌ Please fill in all fields');
+        return;
+    }
+
+    if (!isValidEmail(email)) {
+        alert('❌ Please enter a valid email address');
         return;
     }
 
@@ -165,11 +360,7 @@ async function handleSignupSubmit(e) {
     }
 
     try {
-        // Start Loading
-        btnText.style.display = 'none';
-        spinner.style.display = 'block';
-        btn.style.opacity = '0.7';
-        btn.disabled = true;
+        setSignupLoading(true);
 
         const response = await fetch(`${API_BASE}/auth/signup`, {
             method: 'POST',
@@ -189,6 +380,18 @@ async function handleSignupSubmit(e) {
 
         if (!response.ok) {
             throw new Error(data.error || 'Signup failed');
+        }
+
+        if (data.needsEmailVerification) {
+            const emailToVerify = (data.email || email).trim();
+            const extra = data.otp ? `\n\nDev code: ${data.otp}` : '';
+            alert('✅ ' + (data.message || 'Verification code sent. Please verify your email.') + extra);
+            showOtpSection(emailToVerify);
+            if (data.otp) {
+                setOtpMessage(`Dev code: ${data.otp}`, true);
+            }
+            setSignupLoading(false);
+            return;
         }
 
         if (data.needsApproval) {
@@ -215,9 +418,6 @@ async function handleSignupSubmit(e) {
         }
     } catch (err) {
         alert('❌ ' + err.message);
-        btnText.style.display = 'block';
-        spinner.style.display = 'none';
-        btn.style.opacity = '1';
-        btn.disabled = false;
+        setSignupLoading(false);
     }
 }

@@ -4,9 +4,19 @@ const bcrypt = require('bcrypt');
 const UserSchema = new mongoose.Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true,
+        match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email address'],
+    },
     authProvider: { type: String, enum: ['local', 'google', 'facebook'], default: 'local' },
     authProviderId: { type: String },
+    emailVerified: { type: Boolean, default: false },
+    emailOtpHash: { type: String },
+    emailOtpExpiresAt: { type: Date },
     password: {
         type: String,
         required: function () {

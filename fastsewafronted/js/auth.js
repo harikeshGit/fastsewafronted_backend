@@ -69,17 +69,26 @@ class FastSewaAuth {
     async init() {
         if (!this.token) return;
 
-        // Backend currently does not expose /auth/me, so don't auto-fetch.
-        // Instead, restore user from storage to keep sessions stable across reloads.
-        const stored = localStorage.getItem('fastsewa_current_user') || localStorage.getItem('fastsewaUser');
-        if (!stored) return;
-
+        // Backend exposes /auth/me. Validate token against DB so deleted/blocked users are logged out.
         try {
-            const parsed = JSON.parse(stored);
-            this.currentUser = new User(parsed);
+            const me = await this.apiRequest(API_CONFIG.ENDPOINTS.GET_ME);
+            if (me && me.success && me.user) {
+                this.currentUser = new User(me.user);
+                localStorage.setItem('fastsewa_current_user', JSON.stringify(me.user));
+                localStorage.setItem('fastsewaUser', JSON.stringify(me.user));
+            } else {
+                this.clearAuth();
+            }
         } catch {
-            // If storage is corrupted, keep token but clear user.
-            this.currentUser = null;
+            // If backend is unreachable, fall back to stored user for offline-friendly UI.
+            const stored = localStorage.getItem('fastsewa_current_user') || localStorage.getItem('fastsewaUser');
+            if (!stored) return;
+            try {
+                const parsed = JSON.parse(stored);
+                this.currentUser = new User(parsed);
+            } catch {
+                this.currentUser = null;
+            }
         }
     }
 
