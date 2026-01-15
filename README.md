@@ -29,6 +29,59 @@ python -m http.server 8080
 
 ✅ Frontend runs on `http://localhost:8080`
 
+---
+
+## 🌍 Share Localhost (Cloudflare Tunnel)
+
+If you want to share your local backend/frontend with someone online, you can use Cloudflare Tunnel.
+
+Important: for **login/signup** to work for other people, share the **backend (port 4000)** because it serves the frontend files and the `/api/*` routes together on the same domain.
+
+### Option A: Use the helper script (Windows)
+
+1. Download `cloudflared` for Windows (amd64)
+2. Put the downloaded file in this project folder and name it `cloudflared.exe`
+3. Start your app locally (example: backend on 4000)
+4. Run:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\cloudflare-tunnel.ps1 -Port 4000
+```
+
+Or start the app + tunnel together:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\share-backend.ps1
+```
+
+Quick check (starts everything briefly and prints the URL if detected):
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\share-backend.ps1 -SmokeTest
+```
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\share-frontend.ps1
+```
+
+Quick check:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\share-frontend.ps1 -SmokeTest
+```
+
+Tip: Quick check (starts for ~8 seconds and prints the URL if detected):
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\cloudflare-tunnel.ps1 -Port 4000 -SmokeTest
+```
+
+### Option B: Direct command
+
+```powershell
+cloudflared tunnel --url http://localhost:4000
+```
+
 ### **3. Open in Browser**
 
 **Sign Up as User:**
@@ -51,7 +104,7 @@ python -m http.server 8080
 
 ---
 
-## 🎨 Key Features
+## Key Features
 
 ### **For Users**
 
